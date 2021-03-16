@@ -1,5 +1,4 @@
 NAME = libmalloc.a
-INCLUDES = $(addprefix includes/, malloc.h)
 SRCS = $(addprefix srcs/, main.c)
 OBJS = $(SRCS:srcs/%.c=objs/%.o)
 DEPS = $(SRCS:srcs/%.c=deps/%.d)
