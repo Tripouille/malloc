@@ -13,5 +13,6 @@ int main(int ac, char ** av)
 	void * p = malloc(100000);
 	free(p);
 	write(1, buffer, sprintf(buffer, "End of main\n"));
+	//while(1);
 	return (0);
 }

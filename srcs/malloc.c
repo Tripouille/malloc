@@ -1,5 +1,4 @@
 #include "malloc.h"
-#include <unistd.h>
 
 void free(void *ptr)
 {
@@ -11,7 +10,7 @@ void *malloc(size_t size)
 {
 	char buffer[10000];
 	write(1, buffer, sprintf(buffer, "starting malloc of size %lu\n",size));
-	return (NULL);
+	return (mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, 0, 0));
 }
 
 void *realloc(void *ptr, size_t size)
