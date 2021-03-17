@@ -3,7 +3,7 @@ ifeq ($(HOSTTYPE),)
 	HOSTTYPE := $(shell uname -m)_$(shell uname -s)
 endif
 LINK = libft_malloc
-NAME = $(LINK).so
+NAME = $(LINK)_$(HOSTTYPE).so
 SRCS = $(addprefix srcs/, malloc.c)
 OBJS = $(SRCS:srcs/%.c=objs/%.o)
 DEPS = $(SRCS:srcs/%.c=deps/%.d)
@@ -36,4 +36,4 @@ launch: grademe
 	@valgrind -q --leak-check=full ./grademe
 
 .PHONY: all clean fclean re launch
-include $(wildcard, $(DEPS))
+-include $(DEPS)
