@@ -10,7 +10,7 @@ DEPS	= $(SRCS:srcs/%.c=deps/%.d)
 WD		= $(shell pwd)
 
 CC		= gcc
-CFLAGS	= -Wall -Werror -Wextra -Iincludes
+CFLAGS	= -Wall -Werror -Wextra -g3 -Iincludes
 DFLAGS	= -MT $@ -MMD -MP -MF deps/$*.d
 
 all: $(NAME)
@@ -19,7 +19,7 @@ $(OBJS): objs/%.o: srcs/%.c
 	$(CC) $(CFLAGS) $(DFLAGS) -c $< -o $@
 
 $(NAME): $(OBJS)
-	$(CC) -shared $^ -o $(NAME)
+	$(CC) -Wl,-soname,$(LINK) -shared $^ -o $(NAME)
 	ln -fs $(NAME) $(LINK)
 
 clean:
@@ -34,7 +34,7 @@ grademe: srcs/grademe.c $(NAME)
 	$(CC) -L$(WD) -Wl,-rpath=$(WD) $(CFLAGS) $< -o $@ -l:$(LINK)
 
 launch: grademe
-	@valgrind -q --leak-check=full ./grademe
+	./grademe
 
 .PHONY: all clean fclean re launch
 -include $(DEPS)
