@@ -10,6 +10,7 @@ int main(int ac, char ** av)
 	(void)ac; (void)av;
 	void * p = malloc(100000);
 	(void)p; free(p);
+	coucou();
 	printf("End of main\n");
 	return (0);
 }

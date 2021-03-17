@@ -16,3 +16,8 @@ void *realloc(void *ptr, size_t size)
 	printf("starting realloc on %p  of size %lu\n", ptr,  size);
 	return (NULL);
 }
+
+void coucou(void)
+{
+	printf("coucou\n");
+}

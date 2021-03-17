@@ -2,15 +2,16 @@
 ifeq ($(HOSTTYPE),)
 	HOSTTYPE := $(shell uname -m)_$(shell uname -s)
 endif
-LINK = libft_malloc
-NAME = $(LINK)_$(HOSTTYPE).so
-SRCS = $(addprefix srcs/, malloc.c)
-OBJS = $(SRCS:srcs/%.c=objs/%.o)
-DEPS = $(SRCS:srcs/%.c=deps/%.d)
+LINK	= libft_malloc
+NAME	= $(LINK)_$(HOSTTYPE).so
+SRCS	= $(addprefix srcs/, malloc.c)
+OBJS	= $(SRCS:srcs/%.c=objs/%.o)
+DEPS	= $(SRCS:srcs/%.c=deps/%.d)
+WD		= $(shell pwd)
 
-CC = gcc
-CFLAGS = -Wall -Werror -Wextra -Iincludes
-DFLAGS = -MT $@ -MMD -MP -MF deps/$*.d
+CC		= gcc
+CFLAGS	= -Wall -Werror -Wextra -Iincludes
+DFLAGS	= -MT $@ -MMD -MP -MF deps/$*.d
 
 all: $(NAME)
 
@@ -30,7 +31,7 @@ fclean: clean
 re: fclean all
 
 grademe: srcs/grademe.c $(NAME)
-	$(CC) $(CFLAGS) -L. -l:$(LINK) $< -o $@ 
+	$(CC) -L$(WD) -Wl,-rpath=$(WD) $(CFLAGS) $< -o $@ -l:$(LINK)
 
 launch: grademe
 	@valgrind -q --leak-check=full ./grademe
