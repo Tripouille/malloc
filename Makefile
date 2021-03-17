@@ -30,7 +30,7 @@ fclean: clean
 
 re: fclean all
 
-grademe: srcs/grademe.c $(NAME)
+grademe: srcs/grademe.c | $(NAME)
 	$(CC) -L$(WD) -Wl,-rpath=$(WD) $(CFLAGS) $< -o $@ -l:$(LINK)
 
 launch: grademe

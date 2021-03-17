@@ -15,4 +15,4 @@ int main(int ac, char ** av)
 	write(1, buffer, sprintf(buffer, "End of main\n"));
 	//while(1);
 	return (0);
-}
+}	
