@@ -35,6 +35,7 @@ grademe: srcs/grademe.c | $(NAME)
 
 launch: grademe
 	./grademe
+	@#/usr/bin/time -v ./grademe
 
 .PHONY: all clean fclean re launch
 -include $(DEPS)

@@ -1,4 +1,6 @@
 #include "malloc.h"
+//#include <stdlib.h>
+#include <stdio.h>
 #include <unistd.h>
 
 /* void *mmap(void *addr, size_t length, int prot, int flags,
@@ -8,11 +10,12 @@
 int main(int ac, char ** av)
 {
 	(void)ac; (void)av;
-	char buffer[10000];
-	write(1, buffer, sprintf(buffer, "Start of main\n"));
-	void * p = malloc(100000);
-	free(p);
-	write(1, buffer, sprintf(buffer, "End of main\n"));
-	//while(1);
+
+	char * addr; (void)addr;
+	for (int i = 0; i < 1; ++i)
+	{
+		addr = malloc(1024);
+		addr[0] = 1;
+	}
 	return (0);
 }	

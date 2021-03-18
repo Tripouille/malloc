@@ -4,12 +4,16 @@
 # include <unistd.h>
 # include <sys/mman.h>
 
-/* void *mmap(void *addr, size_t length, int prot, int flags,
-                  int fd, off_t offset);
-       int munmap(void *addr, size_t length);*/
+enum zone_type {TINY, SMALL, LARGE};
 
-void free(void *ptr);
+typedef struct s_malloc_zone
+{
+	enum zone_type			type;
+	void					*start;
+	size_t					size;
+	struct s_malloc_zone	*next_zone;
+}				t_malloc_zone;
+
 void *malloc(size_t size);
-void *realloc(void *ptr, size_t size);
 
 #endif
