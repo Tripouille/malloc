@@ -15,7 +15,7 @@ int main(int ac, char ** av)
 	for (int i = 0; i < 1; ++i)
 	{
 		addr = malloc(1024);
-		addr[0] = 1;
+		//addr[0] = 1;
 	}
 	return (0);
 }	

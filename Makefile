@@ -16,7 +16,7 @@ DFLAGS	= -MT $@ -MMD -MP -MF deps/$*.d
 all: $(NAME)
 
 $(OBJS): objs/%.o: srcs/%.c
-	$(CC) $(CFLAGS) $(DFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -fPIC $(DFLAGS) -c $< -o $@
 
 $(NAME): $(OBJS)
 	$(CC) -Wl,-soname,$(LINK) -shared $^ -o $(NAME)
