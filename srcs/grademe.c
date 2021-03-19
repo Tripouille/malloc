@@ -12,7 +12,7 @@ int main(int ac, char ** av)
 	(void)ac; (void)av;
 
 	char * addr; (void)addr;
-	for (int i = 0; i < 1; ++i)
+	for (int i = 0; i < 2; ++i)
 	{
 		addr = malloc(1024);
 		//addr[0] = 1;
