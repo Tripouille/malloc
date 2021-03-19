@@ -39,11 +39,18 @@ static void *find_chunk(size_t size, t_header *header)
 	char *start = (char*)header + sizeof(t_header);
 	char *end = start + header->zone_size;
 	void *chunk = NULL;
+	size_t remaining_size;
 	while (start < end)
 	{
 		if (((t_block_manager*)start)->is_free && ((t_block_manager*)start)->block_size >= size)
 		{
 			((t_block_manager*)start)->is_free = 0;
+			remaining_size = ((t_block_manager*)start)->block_size - size;
+			if (remaining_size > sizeof(t_block_manager))
+			{
+				((t_block_manager*)(start + sizeof(t_block_manager) + size))->block_size = remaining_size - sizeof(t_block_manager);
+				((t_block_manager*)(start + sizeof(t_block_manager) + size))->is_free = 1;
+			}
 			return (start + sizeof(t_block_manager));
 		}
 		start += sizeof(t_block_manager) + ((t_block_manager*)start)->block_size;
