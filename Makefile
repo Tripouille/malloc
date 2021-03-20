@@ -34,8 +34,8 @@ grademe: srcs/grademe.c | $(NAME)
 	$(CC) -L$(WD) $(CFLAGS) $< -o $@ -lft_malloc
 
 launch: grademe
-	./grademe
-	@#/usr/bin/time -v ./grademe
+	#./grademe
+	/usr/bin/time -v ./grademe
 
 .PHONY: all clean fclean re launch
 -include $(DEPS)
