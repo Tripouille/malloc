@@ -5,7 +5,7 @@ char buffer[1000];
 
 static size_t calculate_padded_size(size_t size)
 {
-	size_t const page_size = getpagesize();
+	size_t page_size = getpagesize();
 	return ((size / page_size) * page_size + (size % page_size ? page_size : 0));
 }
 
@@ -34,38 +34,38 @@ static void *get_new_zone(size_t size)
 	return (new_zone);
 }
 
-static void *find_chunk(size_t size, t_zone_header *header)
+static void *find_block_in_zone(size_t size, t_zone_header *zone_header)
 {
-	char *start = (char*)header + sizeof(t_zone_header);
-	char *end = start + header->zone_size;
-	size_t remaining_size;
-	write(1, buffer, sprintf(buffer, "find_chunk end = %p\n", end));
-	while (start < end)
-	{
-		write(1, buffer, sprintf(buffer, "find_chunk start = %p\n", start));
-		write(1, buffer, sprintf(buffer, "t_block_manager block_size = %lu\n", ((t_block_manager*)start)->block_size));
-		write(1, buffer, sprintf(buffer, "t_block_manager is_free = %i\n", ((t_block_manager*)start)->is_free));
+	void *	zone_start = (void*)zone_header + sizeof(t_zone_header);
+	void *	zone_end = zone_start + zone_header->zone_size;
+	size_t	remaining_size = 0;
 
-		if (((t_block_manager*)start)->is_free && ((t_block_manager*)start)->block_size >= size)
+	for (t_block_manager *block_manager = zone_start; zone_start + sizeof(t_block_manager) < zone_end;
+		zone_start += sizeof(t_block_manager) + block_manager->block_size)
+	{
+		write(1, buffer, sprintf(buffer, "find_block_in_zone zone_start = %p\n", zone_start));
+		write(1, buffer, sprintf(buffer, "t_block_manager block_size = %lu\n", block_manager->block_size));
+		write(1, buffer, sprintf(buffer, "t_block_manager is_free = %i\n", block_manager->is_free));
+		if (block_manager->is_free && block_manager->block_size >= size)
 		{
-			remaining_size = ((t_block_manager*)start)->block_size - size;
-			((t_block_manager*)start)->block_size = size;
-			((t_block_manager*)start)->is_free = 0;
+			remaining_size = block_manager->block_size - size;
+			block_manager->block_size = size;
+			block_manager->is_free = 0;
 			if (remaining_size > sizeof(t_block_manager))
 			{
-				((t_block_manager*)(start + sizeof(t_block_manager) + size))->block_size = remaining_size - sizeof(t_block_manager);
-				((t_block_manager*)(start + sizeof(t_block_manager) + size))->is_free = 1;
+				block_manager = zone_start + sizeof(t_block_manager) + size;
+				block_manager->block_size = remaining_size - sizeof(t_block_manager);
+				block_manager->is_free = 1;
 			}
-			return (start + sizeof(t_block_manager));
+			return (zone_start + sizeof(t_block_manager));
 		}
-		start += sizeof(t_block_manager) + ((t_block_manager*)start)->block_size;
-		if (start + sizeof(t_block_manager) >= end)
-			return (NULL);
 	}
 	return (NULL);
 }
 
-static void * get_tiny_chunk(size_t size)
+
+
+static void * get_tiny_block(size_t size)
 {
 	write(1, buffer, sprintf(buffer, "starting get tiny chunk with size %lu\n", size));
 	t_zone_header *actual_header = NULL; 
@@ -82,8 +82,8 @@ static void * get_tiny_chunk(size_t size)
 	do
 	{
 		write(1, buffer, sprintf(buffer, "actual header = %p\n", actual_header));
-		chunk = find_chunk(size, actual_header);
-		write(1, buffer, sprintf(buffer, "find_chunk ret = %p\n", chunk));
+		chunk = find_block_in_zone(size, actual_header);
+		write(1, buffer, sprintf(buffer, "find_block_in_zone ret = %p\n", chunk));
 		if (chunk == NULL && actual_header->next_zone_header == NULL)
 		{
 			actual_header->next_zone_header = get_new_zone((TINY + sizeof(t_block_manager)) * BLOCK_PER_ZONE);
@@ -99,8 +99,9 @@ static void * get_tiny_chunk(size_t size)
 	return (chunk);
 }
 
-static void * get_small_chunk(size_t size)
+static void * get_small_block(size_t size)
 {
+	(void)size;
 	write(1, buffer, sprintf(buffer, "starting get small chunk with size %lu\n", size));
 	if (memory_manager.small == NULL)
 	{
@@ -110,8 +111,9 @@ static void * get_small_chunk(size_t size)
 	return (NULL);
 }
 
-static void * get_large_chunk(size_t size)
+static void * get_large_block(size_t size)
 {
+	(void)size;
 	write(1, buffer, sprintf(buffer, "starting get large chunk with size %lu\n", size));
 	if (memory_manager.large == NULL)
 	{
@@ -121,22 +123,13 @@ static void * get_large_chunk(size_t size)
 	return (NULL);
 }
 
-static void * get_chunk(size_t size)
-{
-	if (size <= TINY)
-		return (get_tiny_chunk(size));
-	else if (size <= SMALL)
-		return (get_small_chunk(size));
-	else
-		return (get_large_chunk(size));
-}
-
 void *malloc(size_t size)
 {
-	write(1, buffer, sprintf(buffer, "\nstarting malloc of size %lu\n",size));
-	//----------------------------------------------------------------------
-	void * chunk = get_chunk(size);
-	//----------------------------------------------------------------------
-	write(1, buffer, sprintf(buffer, "endind malloc chunk ptr =  %p\n", chunk));
-	return (chunk);
+	write(1, buffer, sprintf(buffer, "\nstarting malloc with size %lu\n", size));
+	if (size <= TINY)
+		return (get_tiny_block(size));
+	else if (size <= SMALL)
+		return (get_small_block(size));
+	else
+		return (get_large_block(size));
 }
