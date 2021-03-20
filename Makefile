@@ -2,7 +2,7 @@
 ifeq ($(HOSTTYPE),)
 	HOSTTYPE := $(shell uname -m)_$(shell uname -s)
 endif
-LINK	= libft_malloc
+LINK	= libft_malloc.so
 NAME	= $(LINK)_$(HOSTTYPE).so
 SRCS	= $(addprefix srcs/, malloc.c)
 OBJS	= $(SRCS:srcs/%.c=objs/%.o)
@@ -19,19 +19,19 @@ $(OBJS): objs/%.o: srcs/%.c
 	$(CC) $(CFLAGS) -fPIC $(DFLAGS) -c $< -o $@
 
 $(NAME): $(OBJS)
-	$(CC) -Wl,-soname,$(LINK) -shared $^ -o $(NAME)
+	$(CC) -Wl,-install_name,$(LINK) -shared $^ -o $(NAME)
 	ln -fs $(NAME) $(LINK)
 
 clean:
 	rm -rf $(OBJS) $(DEPS)
 
 fclean: clean
-	rm -rf $(LINK) $(NAME) grademe
+	rm -rf $(LINK) $(NAME) grademe *.dSYM
 
 re: fclean all
 
 grademe: srcs/grademe.c | $(NAME)
-	$(CC) -L$(WD) -Wl,-rpath=$(WD) $(CFLAGS) $< -o $@ -l:$(LINK)
+	$(CC) -L$(WD) $(CFLAGS) $< -o $@ -lft_malloc
 
 launch: grademe
 	./grademe
