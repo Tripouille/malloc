@@ -19,7 +19,7 @@ $(OBJS): objs/%.o: srcs/%.c
 	$(CC) $(CFLAGS) -fPIC $(DFLAGS) -c $< -o $@
 
 $(NAME): $(OBJS)
-	$(CC) -Wl,-install_name,$(LINK) -shared $^ -o $(NAME)
+	$(CC) -shared $^ -o $(NAME)
 	ln -fs $(NAME) $(LINK)
 
 clean:
@@ -34,8 +34,8 @@ grademe: srcs/grademe.c | $(NAME)
 	$(CC) -L$(WD) $(CFLAGS) $< -o $@ -lft_malloc
 
 launch: grademe
-	./grademe
-	@#/usr/bin/time -v ./grademe
+	#./grademe
+	/usr/bin/time -v ./grademe
 
 .PHONY: all clean fclean re launch
 -include $(DEPS)
