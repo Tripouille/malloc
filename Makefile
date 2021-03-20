@@ -4,7 +4,7 @@ ifeq ($(HOSTTYPE),)
 endif
 LINK	= libft_malloc.so
 NAME	= $(LINK)_$(HOSTTYPE).so
-SRCS	= $(addprefix srcs/, malloc.c)
+SRCS	= $(addprefix srcs/, malloc.c memory_manager.c)
 OBJS	= $(SRCS:srcs/%.c=objs/%.o)
 DEPS	= $(SRCS:srcs/%.c=deps/%.d)
 WD		= $(shell pwd)
