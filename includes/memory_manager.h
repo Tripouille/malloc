@@ -3,6 +3,7 @@
 # include <stdio.h>
 # include <unistd.h>
 # include <sys/mman.h>
+# include <stdbool.h>
 
 enum memory_settings {TINY = 1024, SMALL = 4096, BLOCK_PER_ZONE = 100};
 
