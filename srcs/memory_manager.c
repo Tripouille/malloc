@@ -38,7 +38,7 @@ find_block_in_zone(size_t block_size, t_zone_header *zone_header) {
 	void *	zone_end = zone_start + zone_header->zone_size;
 	size_t	remaining_size = 0;
 
-	for (t_block_manager *block_manager = zone_start; (void*)block_manager + sizeof(t_block_manager) < zone_end;) {
+	for (t_block_manager *block_manager = zone_start; (size_t)(zone_end - (void*)block_manager) > sizeof(t_block_manager);) {
 		//write(1, buffer, sprintf(buffer, "find_block_in_zone zone_start = %p\n", zone_start));
 		//write(1, buffer, sprintf(buffer, "t_block_manager block_size = %lu\n", block_manager->block_size));
 		//write(1, buffer, sprintf(buffer, "t_block_manager is_free = %i\n", block_manager->is_free));
@@ -92,5 +92,5 @@ get_large_zone(size_t block_size) {
 
 	while (*zone_header != NULL)
 		zone_header = &(*zone_header)->next_zone_header;
-	return ((*zone_header = get_new_zone(sizeof(t_block_manager) + block_size)));
+	return ((*zone_header = get_new_zone(block_size)));
 }

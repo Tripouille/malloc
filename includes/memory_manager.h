@@ -6,11 +6,11 @@
 
 enum memory_settings {TINY = 1024, SMALL = 4096, BLOCK_PER_ZONE = 100};
 
-typedef struct	s_block_manager
+typedef struct				s_block_manager
 {
-	size_t					block_size;
+	unsigned int			block_size;
 	char					is_free;
-}				t_block_manager;
+} __attribute__((packed))	t_block_manager;
 
 typedef struct	s_zone_header
 {
