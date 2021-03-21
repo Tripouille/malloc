@@ -9,7 +9,7 @@ show_alloc_tiny(void) {
             for (t_block_manager * block_manager = (void*)tiny + sizeof(t_zone_header);
             (size_t)((void*)tiny + sizeof(t_zone_header) + tiny->zone_size - (void*)block_manager) > sizeof(block_manager);
             block_manager = (void*)block_manager + sizeof(t_block_manager) + block_manager->block_size)
-                if (!block_manager->is_free) {
+                if (!block_manager->is_free || 1) {
                     printf("%p - %p : %lu octets\n", (void*)block_manager + sizeof(t_block_manager),
                             (void*)block_manager + sizeof(t_block_manager) + block_manager->block_size, block_manager->block_size);
                     tiny_total += block_manager->block_size;
@@ -26,7 +26,7 @@ show_alloc_small(void) {
             for (t_block_manager * block_manager = (void*)small + sizeof(t_zone_header);
             (size_t)((void*)small + sizeof(t_zone_header) + small->zone_size - (void*)block_manager) > sizeof(block_manager);
             block_manager = (void*)block_manager + sizeof(t_block_manager) + block_manager->block_size)
-                if (!block_manager->is_free) {
+                if (!block_manager->is_free || 1) {
                     printf("%p - %p : %lu octets\n", (void*)block_manager + sizeof(t_block_manager),
                             (void*)block_manager + sizeof(t_block_manager) + block_manager->block_size, block_manager->block_size);
                     small_total += block_manager->block_size;
@@ -43,7 +43,7 @@ show_alloc_large(void) {
     for (t_zone_header * large = memory_manager.large; large != NULL; large = large->next_zone_header)
     {
             block_manager = (void*)large + sizeof(t_zone_header);
-            if (!block_manager->is_free) {
+            if (!block_manager->is_free || 1) {
                 printf("%p - %p : %lu octets\n", (void*)block_manager + sizeof(t_block_manager),
                         (void*)block_manager + sizeof(t_block_manager) + block_manager->block_size, block_manager->block_size);
                 large_total += block_manager->block_size;

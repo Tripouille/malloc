@@ -11,11 +11,14 @@ int main(int ac, char ** av)
 {
 	(void)ac; (void)av;
 
-	char * addr; (void)addr;
-	for (int i = 0; i < -1; ++i) { addr = malloc(42); addr[0] = 1;}
-	addr = malloc(1); addr[0] = 1;
-	char * addr2 = malloc(30);
-	free(addr2);
+	char * addr[10]; (void)addr;
+	//for (int i = 0; i < -1; ++i) { addr = malloc(42); addr[0] = 1;}
+	show_alloc_mem();
+	addr[0] = malloc(10); addr[0][0] = 1;
+	addr[1] = malloc(20); addr[1][0] = 2;
+	show_alloc_mem();
+	free(addr[0]);
+	free(addr[1]);
 	show_alloc_mem();
 	return (0);
 }

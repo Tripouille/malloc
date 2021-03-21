@@ -139,21 +139,41 @@ get_ptr_zone(void * ptr) {
 }
 
 void
-free_block(void * ptr, t_zone_header * ptr_zone) {
-	for (t_block_manager * block_manager = (void*)ptr_zone + sizeof(t_zone_header);
-	(size_t)((void*)ptr_zone + sizeof(t_zone_header) + ptr_zone->zone_size - (void*) block_manager) > sizeof(t_block_manager);
-	block_manager = (void*)block_manager + sizeof(t_block_manager) + block_manager->block_size)
-		if ((void*)block_manager + sizeof(t_block_manager) == ptr)
-		{
-			write(1, buffer, sprintf(buffer, "ptr found freeing %p\n", ptr));
-			block_manager->is_free = 1;
-			//defrag_zone(ptr_zone);
-			return ;
+defragller(t_zone_header * zone) {
+	write(1, buffer, sprintf(buffer, "starting defragller\n"));
+	for (t_block_manager * block_manager = (void*)zone + sizeof(t_zone_header);
+	(size_t)((void*)zone + sizeof(t_zone_header) + zone->zone_size - (void*)block_manager) > sizeof(t_block_manager);
+	block_manager = (void*)block_manager + sizeof(t_block_manager) + block_manager->block_size) {
+		if (block_manager->is_free) {
+			t_block_manager * next_block_manager = (void*)block_manager + sizeof(t_block_manager)
+													+ block_manager->block_size;
+			t_block_manager * furthest_allocated_block_manager;
+
+			for (furthest_allocated_block_manager = next_block_manager;
+			furthest_allocated_block_manager->is_free && (size_t)((void*)zone + sizeof(t_zone_header) + zone->zone_size
+														- (void*)furthest_allocated_block_manager) > sizeof(t_block_manager);
+			furthest_allocated_block_manager = (void*)furthest_allocated_block_manager + sizeof(t_block_manager)
+												+ furthest_allocated_block_manager->block_size);
+
+			if (next_block_manager != furthest_allocated_block_manager) {
+				write(1, buffer, sprintf(buffer, "degraglling the zone\n"));
+				block_manager->block_size = (void*)furthest_allocated_block_manager - ((void*)block_manager + sizeof(t_block_manager));
+				break ;
+			}
 		}
-		else
-		{
-			write(1, buffer, sprintf(buffer, "actual checked ptr =  %p\n", (void*)block_manager + sizeof(t_block_manager)));
-			write(1, buffer, sprintf(buffer, "looking for ptr =  %p\n",ptr));
+	}
+	//penser a delete la zone si vide;
+}
+
+void
+free_block(void * ptr, t_zone_header * ptr_zone) {
+	write(1, buffer, sprintf(buffer, "block in range free block\n"));
+	for (t_block_manager * block_manager = (void*)ptr_zone + sizeof(t_zone_header);
+	(size_t)((void*)ptr_zone + sizeof(t_zone_header) + ptr_zone->zone_size - (void*)block_manager) > sizeof(t_block_manager);
+	block_manager = (void*)block_manager + sizeof(t_block_manager) + block_manager->block_size)
+		if ((void*)block_manager + sizeof(t_block_manager) == ptr) {
+			block_manager->is_free = 1;
+			return (defragller(ptr_zone));
 		}
 }
 
@@ -163,8 +183,6 @@ free_memory(void * ptr) {
 
 	write(1, buffer, sprintf(buffer, "calling free on %p\n", ptr));
 	ptr_zone = get_ptr_zone(ptr);
-	if (ptr_zone == NULL)
-		return ;
-	write(1, buffer, sprintf(buffer, "block in range free block\n"));
-	free_block(ptr, ptr_zone);
+	if (ptr_zone != NULL)
+		free_block(ptr, ptr_zone);
 }
