@@ -10,8 +10,8 @@ show_alloc_tiny(void) {
             (size_t)((void*)tiny + sizeof(t_zone_header) + tiny->zone_size - (void*)block_manager) > sizeof(block_manager);
             block_manager = (void*)block_manager + sizeof(t_block_manager) + block_manager->block_size)
                 if (!block_manager->is_free) {
-                    printf("%p - %p : %lu octets\n", block_manager,
-                            (void*)block_manager + block_manager->block_size, block_manager->block_size);
+                    printf("%p - %p : %lu octets\n", (void*)block_manager + sizeof(t_block_manager),
+                            (void*)block_manager + sizeof(t_block_manager) + block_manager->block_size, block_manager->block_size);
                     tiny_total += block_manager->block_size;
                 }
     return (tiny_total);
@@ -27,8 +27,8 @@ show_alloc_small(void) {
             (size_t)((void*)small + sizeof(t_zone_header) + small->zone_size - (void*)block_manager) > sizeof(block_manager);
             block_manager = (void*)block_manager + sizeof(t_block_manager) + block_manager->block_size)
                 if (!block_manager->is_free) {
-                    printf("%p - %p : %lu octets\n", block_manager,
-                            (void*)block_manager + block_manager->block_size, block_manager->block_size);
+                    printf("%p - %p : %lu octets\n", (void*)block_manager + sizeof(t_block_manager),
+                            (void*)block_manager + sizeof(t_block_manager) + block_manager->block_size, block_manager->block_size);
                     small_total += block_manager->block_size;
                 }
     return (small_total);
@@ -44,8 +44,8 @@ show_alloc_large(void) {
     {
             block_manager = (void*)large + sizeof(t_zone_header);
             if (!block_manager->is_free) {
-                printf("%p - %p : %lu octets\n", block_manager,
-                        (void*)block_manager + block_manager->block_size, block_manager->block_size);
+                printf("%p - %p : %lu octets\n", (void*)block_manager + sizeof(t_block_manager),
+                        (void*)block_manager + sizeof(t_block_manager) + block_manager->block_size, block_manager->block_size);
                 large_total += block_manager->block_size;
             }
     }

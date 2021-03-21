@@ -27,6 +27,7 @@ typedef struct s_memory_manager
 
 extern t_memory_manager memory_manager;
 
-void * get_memory(size_t size);
+void *	get_memory(size_t size);
+void	free_memory(void * ptr);
 
 #endif

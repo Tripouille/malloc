@@ -13,9 +13,9 @@ int main(int ac, char ** av)
 
 	char * addr; (void)addr;
 	for (int i = 0; i < -1; ++i) { addr = malloc(42); addr[0] = 1;}
-	addr = malloc(TINY);
-	addr = malloc(SMALL);
-	addr = malloc(SMALL + 1);
+	addr = malloc(1); addr[0] = 1;
+	char * addr2 = malloc(30);
+	free(addr2);
 	show_alloc_mem();
 	return (0);
 }

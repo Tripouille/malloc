@@ -1,7 +1,7 @@
 #include "memory_manager.h"
 
 t_memory_manager memory_manager;
-//char buffer[1000];
+char buffer[1000];
 
 static size_t
 calculate_padded_size(size_t size) {
@@ -47,9 +47,9 @@ find_block_in_zone(size_t block_size, t_zone_header *zone_header) {
 			block_manager->block_size = block_size;
 			block_manager->is_free = 0;
 			if (remaining_size > sizeof(t_block_manager)) {
-				block_manager = (void*)block_manager + sizeof(t_block_manager) + block_size;
-				block_manager->block_size = remaining_size - sizeof(t_block_manager);
-				block_manager->is_free = 1;
+				t_block_manager * next_block_manager = (void*)block_manager + sizeof(t_block_manager) + block_size;
+				next_block_manager->block_size = remaining_size - sizeof(t_block_manager);
+				next_block_manager->is_free = 1;
 			}
 			return ((void*)block_manager + sizeof(t_block_manager));
 		}
@@ -104,10 +104,67 @@ get_large_zone(size_t block_size) {
 
 void *
 get_memory(size_t size) {
+	write(1, buffer, sprintf(buffer, "calling malloc of size %lu\n", size));
 	if (size <= TINY)
 		return (get_block_in_tiny_zone(size));
 	else if (size <= SMALL)
 		return (get_block_in_small_zone(size));
 	else
 		return (get_large_zone(size));
+}
+
+static t_zone_header *
+get_ptr_zone(void * ptr) {
+	void * start = NULL;
+	void * end = NULL;
+
+	for (t_zone_header * tiny = memory_manager.tiny; tiny != NULL; tiny = tiny->next_zone_header)
+	{
+		start = (void*)tiny + sizeof(t_zone_header) + sizeof(t_block_manager);
+		end = start + tiny->zone_size;
+		if (start <= ptr && ptr < end)
+			return (tiny);
+	}
+	for (t_zone_header * small = memory_manager.small; small != NULL; small = small->next_zone_header)
+	{
+		start = (void*)small + sizeof(t_zone_header) + sizeof(t_block_manager);
+		end = start + small->zone_size;
+		if (start <= ptr && ptr < end)
+			return (small);
+	}
+	for (t_zone_header * large = memory_manager.large; large != NULL; large = large->next_zone_header)
+		if (ptr == (void*)large + sizeof(t_zone_header) + sizeof(t_block_manager))
+			return (large);
+	return (NULL);
+}
+
+void
+free_block(void * ptr, t_zone_header * ptr_zone) {
+	for (t_block_manager * block_manager = (void*)ptr_zone + sizeof(t_zone_header);
+	(size_t)((void*)ptr_zone + sizeof(t_zone_header) + ptr_zone->zone_size - (void*) block_manager) > sizeof(t_block_manager);
+	block_manager = (void*)block_manager + sizeof(t_block_manager) + block_manager->block_size)
+		if ((void*)block_manager + sizeof(t_block_manager) == ptr)
+		{
+			write(1, buffer, sprintf(buffer, "ptr found freeing %p\n", ptr));
+			block_manager->is_free = 1;
+			//defrag_zone(ptr_zone);
+			return ;
+		}
+		else
+		{
+			write(1, buffer, sprintf(buffer, "actual checked ptr =  %p\n", (void*)block_manager + sizeof(t_block_manager)));
+			write(1, buffer, sprintf(buffer, "looking for ptr =  %p\n",ptr));
+		}
+}
+
+void
+free_memory(void * ptr) {
+	t_zone_header * ptr_zone = NULL;
+
+	write(1, buffer, sprintf(buffer, "calling free on %p\n", ptr));
+	ptr_zone = get_ptr_zone(ptr);
+	if (ptr_zone == NULL)
+		return ;
+	write(1, buffer, sprintf(buffer, "block in range free block\n"));
+	free_block(ptr, ptr_zone);
 }
