@@ -12,10 +12,10 @@ int main(int ac, char ** av)
 	(void)ac; (void)av;
 
 	char * addr; (void)addr;
-	for (int i = 0; i < 1024; ++i)
-	{
-		addr = malloc(1024);
-		//addr[0] = 1;
-	}
+	for (int i = 0; i < -1; ++i) { addr = malloc(42); addr[0] = 1;}
+	addr = malloc(TINY);
+	addr = malloc(SMALL);
+	addr = malloc(SMALL + 1);
+	show_alloc_mem();
 	return (0);
 }

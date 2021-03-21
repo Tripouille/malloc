@@ -8,8 +8,8 @@ enum memory_settings {TINY = 1024, SMALL = 4096, BLOCK_PER_ZONE = 100};
 
 typedef struct				s_block_manager
 {
-	unsigned int			block_size;
-	char					is_free;
+	size_t			block_size;
+	char			is_free;
 } __attribute__((packed))	t_block_manager;
 
 typedef struct	s_zone_header

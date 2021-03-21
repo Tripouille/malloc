@@ -88,11 +88,18 @@ get_block_in_small_zone(size_t block_size) {
 
 static void *
 get_large_zone(size_t block_size) {
-	t_zone_header ** zone_header = &memory_manager.large;
+	t_zone_header **	zone_header = &memory_manager.large;
+	t_block_manager *	block_manager = NULL;
 
 	while (*zone_header != NULL)
 		zone_header = &(*zone_header)->next_zone_header;
-	return ((*zone_header = get_new_zone(block_size)));
+	*zone_header = get_new_zone(sizeof(t_block_manager) + block_size);
+	if (*zone_header == NULL)
+		return (NULL);
+	block_manager = (void*)*zone_header + sizeof(t_zone_header);
+	block_manager->block_size = block_size;
+	block_manager->is_free = 0;
+	return ((void*)block_manager + sizeof(t_block_manager));
 }
 
 void *

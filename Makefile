@@ -4,7 +4,7 @@ ifeq ($(HOSTTYPE),)
 endif
 LINK	= libft_malloc.so
 NAME	= $(LINK)_$(HOSTTYPE).so
-SRCS	= $(addprefix srcs/, malloc.c memory_manager.c)
+SRCS	= $(addprefix srcs/, memory_manager.c show_alloc_mem.c malloc.c )
 OBJS	= $(SRCS:srcs/%.c=objs/%.o)
 DEPS	= $(SRCS:srcs/%.c=deps/%.d)
 WD		= $(shell pwd)
@@ -34,8 +34,8 @@ grademe: srcs/grademe.c | $(NAME)
 	$(CC) -L$(WD) $(CFLAGS) $< -o $@ -lft_malloc
 
 launch: grademe
-	#./grademe
-	/usr/bin/time -v ./grademe
+	./grademe
+	@#/usr/bin/time -v ./grademe
 
 .PHONY: all clean fclean re launch
 -include $(DEPS)
