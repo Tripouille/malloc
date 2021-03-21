@@ -10,14 +10,14 @@ calculate_padded_size(size_t size) {
 }
 
 static void *
-get_memory(size_t size) {
+get_mmap(size_t size) {
 	return (mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, 0, 0));
 }
 
 static void *
 get_new_zone(size_t size) {
 	size_t const padded_size = calculate_padded_size(sizeof(t_zone_header) + size);
-	void * new_zone = get_memory(padded_size);
+	void * new_zone = get_mmap(padded_size);
 	//write(1, buffer, sprintf(buffer, "get_new_zone with size %lu\n", padded_size));
 	if (new_zone == NULL)
 		return (NULL);
@@ -69,28 +69,38 @@ get_block_in_zone(size_t block_size, size_t zone_size, t_zone_header ** zone_hea
 		if (*zone_header == NULL && (*zone_header = get_new_zone(zone_size)) == NULL)
 			return (NULL);
 		block = find_block_in_zone(block_size, *zone_header);
-		if (block == NULL)
+		//if (block == NULL)
 			//write(1, buffer, sprintf(buffer, "going to next header\n"));
 		zone_header = &(*zone_header)->next_zone_header;
 	} while (block == NULL);
 	return (block);
 }
 
-void *
+static void *
 get_block_in_tiny_zone(size_t block_size) {
 	return (get_block_in_zone(block_size, (sizeof(t_block_manager) + TINY) * BLOCK_PER_ZONE, &memory_manager.tiny));
 }
 
-void *
+static void *
 get_block_in_small_zone(size_t block_size) {
 	return (get_block_in_zone(block_size, (sizeof(t_block_manager) + SMALL) * BLOCK_PER_ZONE, &memory_manager.small));
 }
 
-void *
+static void *
 get_large_zone(size_t block_size) {
 	t_zone_header ** zone_header = &memory_manager.large;
 
 	while (*zone_header != NULL)
 		zone_header = &(*zone_header)->next_zone_header;
 	return ((*zone_header = get_new_zone(block_size)));
+}
+
+void *
+get_memory(size_t size) {
+	if (size <= TINY)
+		return (get_block_in_tiny_zone(size));
+	else if (size <= SMALL)
+		return (get_block_in_small_zone(size));
+	else
+		return (get_large_zone(size));
 }

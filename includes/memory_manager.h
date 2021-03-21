@@ -27,8 +27,6 @@ typedef struct s_memory_manager
 
 extern t_memory_manager memory_manager;
 
-void * get_block_in_tiny_zone(size_t block_size);
-void * get_block_in_small_zone(size_t block_size);
-void * get_large_zone(size_t block_size);
+void * get_memory(size_t size);
 
 #endif
