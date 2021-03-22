@@ -119,8 +119,6 @@ get_memory(size_t size) {
 
 /*---------------------------------------------------------------------------------------------------------------*/
 
-
-
 static t_zone_header *
 get_ptr_zone(void * ptr, t_zone_header *** first_zone) {
 	void * start = NULL;

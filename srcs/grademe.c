@@ -3,9 +3,8 @@
 #include <stdio.h>
 #include <unistd.h>
 
-int main(int ac, char ** av)
+int main(void)
 {
-	(void)ac; (void)av;
 
 	char * addr[1000]; (void)addr; int i = 0;
 	//for (int i = 0; i < -1; ++i) { addr = malloc(42); addr[0] = 1;}

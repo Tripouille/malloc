@@ -1,4 +1,6 @@
-.DEFAULT_GOAL = launch
+.DEFAULT_GOAL = tests
+TESTS 	= test0 test1 test2
+
 ifeq ($(HOSTTYPE),)
 	HOSTTYPE := $(shell uname -m)_$(shell uname -s)
 endif
@@ -26,16 +28,14 @@ clean:
 	rm -rf $(OBJS) $(DEPS)
 
 fclean: clean
-	rm -rf $(LINK) $(NAME) grademe *.dSYM
+	rm -rf $(LINK) $(NAME) grademe *.dSYM $(TESTS)
 
 re: fclean all
 
-grademe: srcs/grademe.c | $(NAME)
-	$(CC) -L$(WD) $(CFLAGS) $< -o $@ -lft_malloc
+tests: $(TESTS)
+$(TESTS): %: srcs/%.c | $(NAME)
+	@$(CC) -L$(WD) $(CFLAGS) $< -o $@ -lft_malloc
+	@echo -n "$@:" && /usr/bin/time -v ./$@ 2>&1 | grep "Minor (reclaiming a frame) page faults:"
 
-launch: grademe
-	./grademe
-	@#/usr/bin/time -v ./grademe
-
-.PHONY: all clean fclean re launch
+.PHONY: all clean fclean re launch $(TESTS)
 -include $(DEPS)
