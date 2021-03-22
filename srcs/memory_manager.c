@@ -20,7 +20,7 @@ get_new_zone(size_t size) {
 	size_t const padded_size = calculate_padded_size(sizeof(t_zone_header) + size);
 	void * new_zone = get_mmap(padded_size);
 	//write(1, buffer, sprintf(buffer, "get_new_zone with size %lu\n", padded_size));
-	if (new_zone == NULL)
+	if (new_zone == MAP_FAILED)
 		return (NULL);
 	((t_zone_header*)new_zone)->next_zone_header = NULL;
 	((t_zone_header*)new_zone)->zone_size = padded_size - sizeof(t_zone_header);
@@ -96,7 +96,7 @@ get_large_zone(size_t block_size) {
 	while (*zone_header != NULL)
 		zone_header = &(*zone_header)->next_zone_header;
 	*zone_header =  get_mmap(padded_size);
-	if (*zone_header == NULL)
+	if (*zone_header == MAP_FAILED)
 		return (NULL);
 
 	(*zone_header)->next_zone_header = NULL;
