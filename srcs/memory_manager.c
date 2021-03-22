@@ -11,6 +11,7 @@ calculate_padded_size(size_t size) {
 
 static void *
 get_mmap(size_t size) {
+	write(1, buffer, sprintf(buffer, "calling get_mmap for %li pages\n", size / getpagesize()));
 	return (mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, 0, 0));
 }
 
@@ -108,7 +109,7 @@ get_large_zone(size_t block_size) {
 
 void *
 get_memory(size_t size) {
-	write(1, buffer, sprintf(buffer, "calling malloc of size %lu\n", size));
+	//write(1, buffer, sprintf(buffer, "calling malloc of size %lu\n", size));
 	if (size <= TINY)
 		return (get_block_in_tiny_zone(size));
 	else if (size <= SMALL)
@@ -162,24 +163,29 @@ zone_is_completely_free(t_zone_header * zone) {
 
 static void
 clean_memory_manager(t_zone_header ** first_zone) {
-	write(1, buffer, sprintf(buffer, "calling clean_memory_manager\n"));
+	//write(1, buffer, sprintf(buffer, "calling clean_memory_manager\n"));
 	t_zone_header * actual = NULL;
 	t_zone_header * prev = NULL;
 	for (actual = *first_zone;
 	actual != NULL && !zone_is_completely_free(actual);
 	actual = actual->next_zone_header)
 		prev = actual;
-	write(1, buffer, sprintf(buffer, "clean_memory_manager post for\n"));
+	//write(1, buffer, sprintf(buffer, "clean_memory_manager post for\n"));
 	if (prev != NULL)
+	{
 		prev->next_zone_header = actual->next_zone_header;
-	else
+		munmap(actual, sizeof(t_zone_header) + actual->zone_size);
+	}
+	else if (actual->next_zone_header != NULL)
+	{
 		*first_zone	= actual->next_zone_header;
-	munmap(actual, sizeof(t_zone_header) + actual->zone_size);
+		munmap(actual, sizeof(t_zone_header) + actual->zone_size);
+	}
 }
 
 static void
 defragller(t_zone_header * zone, t_zone_header ** first_zone) {
-	write(1, buffer, sprintf(buffer, "starting defragller\n"));
+	//write(1, buffer, sprintf(buffer, "starting defragller\n"));
 	for (t_block_manager * block_manager = (void*)zone + sizeof(t_zone_header);
 	(size_t)((void*)zone + sizeof(t_zone_header) + zone->zone_size - (void*)block_manager) > sizeof(t_block_manager);
 	block_manager = (void*)block_manager + sizeof(t_block_manager) + block_manager->block_size) {
@@ -195,22 +201,22 @@ defragller(t_zone_header * zone, t_zone_header ** first_zone) {
 												+ furthest_allocated_block_manager->block_size);
 
 			if (next_block_manager != furthest_allocated_block_manager) {
-				write(1, buffer, sprintf(buffer, "degraglling the zone %p\n", (void*)zone));
+				//write(1, buffer, sprintf(buffer, "degraglling the zone %p\n", (void*)zone));
 				block_manager->block_size = (void*)furthest_allocated_block_manager - ((void*)block_manager + sizeof(t_block_manager));
 				break ;
 			}
 		}
 	}
-	write(1, buffer, sprintf(buffer, "fin defragller\n"));
+	//write(1, buffer, sprintf(buffer, "fin defragller\n"));
 	if (zone_is_completely_free(zone))
 		clean_memory_manager(first_zone);
-	else
-		write(1, buffer, sprintf(buffer, "zone_is_ NOT completely_free\n"));
+	//else
+		//write(1, buffer, sprintf(buffer, "zone_is_ NOT completely_free\n"));
 }
 
 static void
 free_block(void * ptr, t_zone_header * ptr_zone, t_zone_header ** first_zone) {
-	write(1, buffer, sprintf(buffer, "block in range free block\n"));
+	//write(1, buffer, sprintf(buffer, "block in range free block\n"));
 	for (t_block_manager * block_manager = (void*)ptr_zone + sizeof(t_zone_header);
 	(size_t)((void*)ptr_zone + sizeof(t_zone_header) + ptr_zone->zone_size - (void*)block_manager) > sizeof(t_block_manager);
 	block_manager = (void*)block_manager + sizeof(t_block_manager) + block_manager->block_size)
@@ -225,7 +231,7 @@ free_memory(void * ptr) {
 	t_zone_header * ptr_zone = NULL;
 	t_zone_header ** first_zone = NULL;
 
-	write(1, buffer, sprintf(buffer, "calling free on %p\n", ptr));
+	//write(1, buffer, sprintf(buffer, "calling free on %p\n", ptr));
 	ptr_zone = get_ptr_zone(ptr, &first_zone);
 	if (ptr_zone != NULL)
 		free_block(ptr, ptr_zone, first_zone);

@@ -12,6 +12,6 @@ int main(void)
 		free(addr);
 		i++;
 	}
-	show_alloc_mem();
+	//show_alloc_mem();
 	return (0);
 }
