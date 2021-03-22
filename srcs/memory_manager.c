@@ -11,7 +11,7 @@ calculate_padded_size(size_t size) {
 
 static void *
 get_mmap(size_t size) {
-	write(1, buffer, sprintf(buffer, "calling get_mmap for %li pages\n", size / getpagesize()));
+	//write(1, buffer, sprintf(buffer, "calling get_mmap for %li pages\n", size / getpagesize()));
 	return (mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, 0, 0));
 }
 
@@ -109,7 +109,7 @@ get_large_zone(size_t block_size) {
 
 void *
 get_memory(size_t size) {
-	//write(1, buffer, sprintf(buffer, "calling malloc of size %lu\n", size));
+	write(1, buffer, sprintf(buffer, "calling malloc of size %lu\n", size));
 	if (size <= TINY)
 		return (get_block_in_tiny_zone(size));
 	else if (size <= SMALL)
@@ -163,7 +163,7 @@ zone_is_completely_free(t_zone_header * zone) {
 
 static void
 clean_memory_manager(t_zone_header ** first_zone) {
-	//write(1, buffer, sprintf(buffer, "calling clean_memory_manager\n"));
+	write(1, buffer, sprintf(buffer, "calling clean_memory_manager\n"));
 	t_zone_header * actual = NULL;
 	t_zone_header * prev = NULL;
 	for (actual = *first_zone;
@@ -231,7 +231,8 @@ free_memory(void * ptr) {
 	t_zone_header * ptr_zone = NULL;
 	t_zone_header ** first_zone = NULL;
 
-	//write(1, buffer, sprintf(buffer, "calling free on %p\n", ptr));
+	write(1, buffer, sprintf(buffer, "calling free on %p\n", ptr));
+	return;
 	ptr_zone = get_ptr_zone(ptr, &first_zone);
 	if (ptr_zone != NULL)
 		free_block(ptr, ptr_zone, first_zone);
