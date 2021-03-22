@@ -31,37 +31,35 @@ get_new_zone(size_t size) {
 }
 
 
+t_zone_header *
+get_ptr_zone_in_specific_zone(void * ptr, t_zone_header *** first_zone, t_zone_header ** specific_zone) {
+	void * start = NULL;
+	void * end = NULL;
+	for (t_zone_header * actual_zone = *specific_zone; actual_zone != NULL; actual_zone = actual_zone->next_zone_header)
+	{
+		start = (void*)actual_zone + sizeof(t_zone_header) + sizeof(t_block_manager);
+		end = start + actual_zone->zone_size;
+		if (start <= ptr && ptr < end)
+		{
+			*first_zone = specific_zone;
+			return (actual_zone);
+		}
+	}
+	return (NULL);
+}
 
 t_zone_header *
 get_ptr_zone(void * ptr, t_zone_header *** first_zone) {
-	void * start = NULL;
-	void * end = NULL;
+	t_zone_header *		zone = NULL;
 
-	for (t_zone_header * tiny = memory_manager.tiny; tiny != NULL; tiny = tiny->next_zone_header)
-	{
-		start = (void*)tiny + sizeof(t_zone_header) + sizeof(t_block_manager);
-		end = start + tiny->zone_size;
-		if (start <= ptr && ptr < end)
-		{
-			*first_zone = &memory_manager.tiny;
-			return (tiny);
-		}
-	}
-	for (t_zone_header * small = memory_manager.small; small != NULL; small = small->next_zone_header)
-	{
-		start = (void*)small + sizeof(t_zone_header) + sizeof(t_block_manager);
-		end = start + small->zone_size;
-		if (start <= ptr && ptr < end)
-		{
-			*first_zone = &memory_manager.small;
-			return (small);
-		}
-	}
-	for (t_zone_header * large = memory_manager.large; large != NULL; large = large->next_zone_header)
-		if (ptr == (void*)large + sizeof(t_zone_header) + sizeof(t_block_manager))
-		{
-			*first_zone = &memory_manager.large;
-			return (large);
-		}
+	if ((zone = get_ptr_zone_in_specific_zone(ptr, first_zone, &memory_manager.tiny)) != NULL
+	|| (zone = get_ptr_zone_in_specific_zone(ptr, first_zone, &memory_manager.small)) != NULL
+	|| (zone = get_ptr_zone_in_specific_zone(ptr, first_zone, &memory_manager.large)) != NULL)
+		return (zone);
 	return (NULL);
+}
+
+bool
+is_large_zone(t_zone_header * zone) {
+	return (zone->zone_size - sizeof(t_block_manager) > SMALL);
 }

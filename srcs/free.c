@@ -3,6 +3,8 @@
 static bool
 zone_is_completely_free(t_zone_header * zone) {
 	t_block_manager * block_manager = (void*)zone + sizeof(t_zone_header);
+	if (is_large_zone(zone) && block_manager->is_free)
+		return (true);
 	return (zone->zone_size == sizeof(t_block_manager) + block_manager->block_size
 	&& block_manager->is_free);
 }
@@ -20,7 +22,7 @@ clean_memory_manager(t_zone_header ** first_zone) {
 		prev->next_zone_header = actual->next_zone_header;
 		munmap(actual, sizeof(t_zone_header) + actual->zone_size);
 	}
-	else if (actual->next_zone_header != NULL)
+	else if (is_large_zone(actual) || actual->next_zone_header != NULL)
 	{
 		*first_zone	= actual->next_zone_header;
 		munmap(actual, sizeof(t_zone_header) + actual->zone_size);

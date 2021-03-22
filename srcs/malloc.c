@@ -62,7 +62,7 @@ get_large_zone(size_t block_size) {
 	(*zone_header)->next_zone_header = NULL;
 	(*zone_header)->zone_size = padded_size - sizeof(t_zone_header);
 	block_manager = (void*)*zone_header + sizeof(t_zone_header);
-	block_manager->block_size = padded_size - sizeof(t_zone_header) - sizeof(t_block_manager);
+	block_manager->block_size = block_size;
 	block_manager->is_free = 0;
 	return ((void*)block_manager + sizeof(t_block_manager));
 }
