@@ -57,13 +57,12 @@ defragller(t_zone_header * zone, t_zone_header ** first_zone) {
 
 static void
 free_block(void * ptr, t_zone_header * ptr_zone, t_zone_header ** first_zone) {
-	for (t_block_manager * block_manager = (void*)ptr_zone + sizeof(t_zone_header);
-	(size_t)((void*)ptr_zone + sizeof(t_zone_header) + ptr_zone->zone_size - (void*)block_manager) > sizeof(t_block_manager);
-	block_manager = (void*)block_manager + sizeof(t_block_manager) + block_manager->block_size)
-		if ((void*)block_manager + sizeof(t_block_manager) == ptr) {
-			block_manager->is_free = 1;
-			return (defragller(ptr_zone, first_zone));
-		}
+	t_block_manager * block_manager = get_block_manager(ptr, ptr_zone);
+
+	if (block_manager == NULL)
+		return ;
+	block_manager->is_free = 1;
+	defragller(ptr_zone, first_zone);
 }
 
 void
