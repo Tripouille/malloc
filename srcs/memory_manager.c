@@ -115,8 +115,10 @@ get_memory(size_t size) {
 
 /*---------------------------------------------------------------------------------------------------------------*/
 
+
+
 static t_zone_header *
-get_ptr_zone(void * ptr) {
+get_ptr_zone(void * ptr, t_zone_header ** first_zone) {
 	void * start = NULL;
 	void * end = NULL;
 
@@ -125,18 +127,27 @@ get_ptr_zone(void * ptr) {
 		start = (void*)tiny + sizeof(t_zone_header) + sizeof(t_block_manager);
 		end = start + tiny->zone_size;
 		if (start <= ptr && ptr < end)
+		{
+			*first_zone = memory_manager.tiny;
 			return (tiny);
+		}
 	}
 	for (t_zone_header * small = memory_manager.small; small != NULL; small = small->next_zone_header)
 	{
 		start = (void*)small + sizeof(t_zone_header) + sizeof(t_block_manager);
 		end = start + small->zone_size;
 		if (start <= ptr && ptr < end)
+		{
+			*first_zone = memory_manager.small;
 			return (small);
+		}
 	}
 	for (t_zone_header * large = memory_manager.large; large != NULL; large = large->next_zone_header)
 		if (ptr == (void*)large + sizeof(t_zone_header) + sizeof(t_block_manager))
+		{
+			*first_zone = memory_manager.large;
 			return (large);
+		}
 	return (NULL);
 }
 
@@ -148,21 +159,28 @@ zone_is_completely_free(t_zone_header * zone) {
 }
 
 static void
-clean_memory_manager(void) {
+clean_memory_manager(t_zone_header * first_zone) {
 	write(1, buffer, sprintf(buffer, "calling clean_memory_manager\n"));
-	//t_zone_header ** prev = NULL;
+	t_zone_header * actual = NULL;
+	t_zone_header * prev = NULL;
+	return;
+	for (actual = first_zone;
+	actual != NULL && !zone_is_completely_free(actual);
+	actual = actual->next_zone_header)
+		prev = actual;
 
-	for (t_zone_header ** tiny = &memory_manager.tiny;
-	*tiny != NULL; tiny = &(*tiny)->next_zone_header)
-		if (zone_is_completely_free(*tiny))
-		{
-			write(1, buffer, sprintf(buffer, "zone_is_completely_free\n"));
-			return ;
-		}
+	if (actual != NULL)
+	{
+		if (prev != NULL)
+			prev->next_zone_header = actual->next_zone_header;
+		else
+			memory_manager.tiny	= actual->next_zone_header;
+		munmap(actual, sizeof(t_zone_header) + actual->zone_size);
+	}
 }
 
 static void
-defragller(t_zone_header * zone) {
+defragller(t_zone_header * zone, t_zone_header * first_zone) {
 	write(1, buffer, sprintf(buffer, "starting defragller\n"));
 	for (t_block_manager * block_manager = (void*)zone + sizeof(t_zone_header);
 	(size_t)((void*)zone + sizeof(t_zone_header) + zone->zone_size - (void*)block_manager) > sizeof(t_block_manager);
@@ -186,27 +204,28 @@ defragller(t_zone_header * zone) {
 		}
 	}
 	if (zone_is_completely_free(zone))
-		clean_memory_manager();
+		clean_memory_manager(first_zone);
 }
 
 static void
-free_block(void * ptr, t_zone_header * ptr_zone) {
+free_block(void * ptr, t_zone_header * ptr_zone, t_zone_header * first_zone) {
 	write(1, buffer, sprintf(buffer, "block in range free block\n"));
 	for (t_block_manager * block_manager = (void*)ptr_zone + sizeof(t_zone_header);
 	(size_t)((void*)ptr_zone + sizeof(t_zone_header) + ptr_zone->zone_size - (void*)block_manager) > sizeof(t_block_manager);
 	block_manager = (void*)block_manager + sizeof(t_block_manager) + block_manager->block_size)
 		if ((void*)block_manager + sizeof(t_block_manager) == ptr) {
 			block_manager->is_free = 1;
-			return (defragller(ptr_zone));
+			return (defragller(ptr_zone, first_zone));
 		}
 }
 
 void
 free_memory(void * ptr) {
 	t_zone_header * ptr_zone = NULL;
+	t_zone_header * first_zone = NULL;
 
 	write(1, buffer, sprintf(buffer, "calling free on %p\n", ptr));
-	ptr_zone = get_ptr_zone(ptr);
+	ptr_zone = get_ptr_zone(ptr, &first_zone);
 	if (ptr_zone != NULL)
-		free_block(ptr, ptr_zone);
+		free_block(ptr, ptr_zone, first_zone);
 }
