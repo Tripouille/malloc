@@ -28,7 +28,9 @@ typedef struct s_memory_manager
 
 extern t_memory_manager memory_manager;
 
-void *	get_memory(size_t size);
-void	free_memory(void * ptr);
+size_t			calculate_padded_size(size_t size);
+void *			get_mmap(size_t size);
+void *			get_new_zone(size_t size);
+t_zone_header *	get_ptr_zone(void * ptr, t_zone_header *** first_zone);
 
 #endif

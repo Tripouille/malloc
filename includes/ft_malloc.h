@@ -1,5 +1,5 @@
-#ifndef MALLOC_H
-# define MALLOC_H
+#ifndef FT_MALLOC_H
+# define FT_MALLOC_H
 # include "memory_manager.h"
 
 void *		malloc(size_t size);
