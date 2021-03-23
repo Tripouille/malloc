@@ -5,13 +5,14 @@
 # include <sys/mman.h>
 # include <stdbool.h>
 
-enum memory_settings {TINY = 1024, SMALL = 4096, BLOCK_PER_ZONE = 100};
+enum memory_settings {TINY = 1024, SMALL = 4096, BLOCK_PER_ZONE = 1000};
 
 typedef struct				s_block_manager
 {
 	size_t			block_size;
 	char			is_free;
-} __attribute__((packed))	t_block_manager;
+} 	t_block_manager;
+//} __attribute__((packed))	t_block_manager;
 
 typedef struct	s_zone_header
 {

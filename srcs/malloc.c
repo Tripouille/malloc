@@ -4,18 +4,18 @@ static void *
 find_block_in_zone(size_t block_size, t_zone_header *zone_header) {
 	void *	zone_start = (void*)zone_header + sizeof(t_zone_header);
 	void *	zone_end = zone_start + zone_header->zone_size;
-	size_t	remaining_size = 0;
+	//size_t	remaining_size = 0;
 
 	for (t_block_manager *block_manager = zone_start; (size_t)(zone_end - (void*)block_manager) > sizeof(t_block_manager);) {
 		if (block_manager->is_free && block_manager->block_size >= block_size) {
-			remaining_size = block_manager->block_size - block_size;
-			block_manager->block_size = block_size;
+			//remaining_size = block_manager->block_size - block_size;
+			//block_manager->block_size = block_size;
 			block_manager->is_free = 0;
-			if (remaining_size > sizeof(t_block_manager)) {
-				t_block_manager * next_block_manager = (void*)block_manager + sizeof(t_block_manager) + block_size;
-				next_block_manager->block_size = remaining_size - sizeof(t_block_manager);
-				next_block_manager->is_free = 1;
-			}
+			//if (remaining_size > sizeof(t_block_manager)) {
+			//	t_block_manager * next_block_manager = (void*)block_manager + sizeof(t_block_manager) + block_size;
+			//	next_block_manager->block_size = remaining_size - sizeof(t_block_manager);
+				//next_block_manager->is_free = 1;
+			//}
 			return ((void*)block_manager + sizeof(t_block_manager));
 		}
 		else
@@ -32,7 +32,8 @@ get_block_in_zone(size_t block_size, size_t zone_size, t_zone_header ** zone_hea
 		if (*zone_header == NULL && (*zone_header = get_new_zone(zone_size)) == NULL)
 			return (NULL);
 		block = find_block_in_zone(block_size, *zone_header);
-		zone_header = &(*zone_header)->next_zone_header;
+		if (block == NULL)
+			zone_header = &(*zone_header)->next_zone_header;
 	} while (block == NULL);
 	return (block);
 }
@@ -79,7 +80,13 @@ get_memory(size_t size) {
 
 void *
 malloc(size_t size) {
+	char buffer[10000];
+	write(1, buffer, sprintf(buffer, "calling malloc size %lu\n", size));
 	if (size)
-		return (get_memory(size));
+	{
+		void * result = get_memory(size);
+		//show_alloc_mem();
+		return (result);
+	}
 	return (NULL);
 }

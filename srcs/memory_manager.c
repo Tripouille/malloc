@@ -12,6 +12,7 @@ calculate_padded_size(size_t size) {
 
 void *
 get_mmap(size_t size) {
+	//write(1, buffer, sprintf(buffer, "calling get_mmap for %li pages\n", size / getpagesize()));
 	return (mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, 0, 0));
 }
 
@@ -65,9 +66,13 @@ is_large_zone(t_zone_header * zone) {
 t_block_manager *
 get_block_manager(void * ptr, t_zone_header * zone) {
 	for (t_block_manager * block_manager = (void*)zone + sizeof(t_zone_header);
-	(size_t)((void*)zone + sizeof(t_zone_header) + zone->zone_size - (void*)block_manager) > sizeof(t_block_manager);
+	//(size_t)((void*)zone + sizeof(t_zone_header) + zone->zone_size - (void*)block_manager) > sizeof(t_block_manager);
+	(void*)block_manager + sizeof(t_block_manager) < (void*)zone + sizeof(t_zone_header) + zone->zone_size ;
 	block_manager = (void*)block_manager + sizeof(t_block_manager) + block_manager->block_size)
 		if ((void*)block_manager + sizeof(t_block_manager) == ptr)
 			return (block_manager);
+
+	char buffer[10000];
+		write(1, buffer, sprintf(buffer, "get_block_manager return NULL\n"));
 	return (NULL);
 }

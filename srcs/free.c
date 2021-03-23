@@ -1,5 +1,5 @@
 #include "ft_malloc.h"
-
+/*
 static bool
 zone_is_completely_free(t_zone_header * zone) {
 	t_block_manager * block_manager = (void*)zone + sizeof(t_zone_header);
@@ -53,7 +53,7 @@ defragller(t_zone_header * zone, t_zone_header ** first_zone) {
 	}
 	if (zone_is_completely_free(zone))
 		clean_memory_manager(first_zone);
-}
+}*/
 
 static void
 free_block(void * ptr, t_zone_header * ptr_zone, t_zone_header ** first_zone) {
@@ -62,11 +62,14 @@ free_block(void * ptr, t_zone_header * ptr_zone, t_zone_header ** first_zone) {
 	if (block_manager == NULL)
 		return ;
 	block_manager->is_free = 1;
-	defragller(ptr_zone, first_zone);
+	//defragller(ptr_zone, first_zone);
+	(void)first_zone;
 }
 
 void
 free(void * ptr) {
+	char buffer[10000];
+	write(1, buffer, sprintf(buffer, "calling free on %p\n", ptr));
 	t_zone_header * ptr_zone = NULL;
 	t_zone_header ** first_zone = NULL;
 
@@ -75,4 +78,5 @@ free(void * ptr) {
 	ptr_zone = get_ptr_zone(ptr, &first_zone);
 	if (ptr_zone != NULL)
 		free_block(ptr, ptr_zone, first_zone);
+	//show_alloc_mem();
 }

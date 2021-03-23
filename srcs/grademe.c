@@ -11,11 +11,11 @@ int main(void)
 	addr[i++] = malloc(2000000); 
 	//addr[i++] = malloc(2);
 	//addr[i++] = malloc(3000);
-	show_alloc_mem();
+	//show_alloc_mem();
 
 	free(addr[0]);
 	//free(addr[1]);
-	show_alloc_mem();
+	//show_alloc_mem();
 	//free(addr[2]);
 	return (0);
 }
