@@ -5,7 +5,7 @@
 # include <sys/mman.h>
 # include <stdbool.h>
 
-enum memory_settings {TINY = 1024, SMALL = 4096, BLOCK_PER_ZONE = 1000};
+enum memory_settings {TINY = 1, SMALL = 2, BLOCK_PER_ZONE = 1};
 
 typedef struct				s_block_manager
 {

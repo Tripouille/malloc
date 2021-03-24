@@ -58,20 +58,20 @@ defragller(t_zone_header * zone, t_zone_header ** first_zone) {
 static void
 free_block(void * ptr, t_zone_header * ptr_zone, t_zone_header ** first_zone) {
 	t_block_manager * block_manager = get_block_manager(ptr, ptr_zone);
-	char buffer[10000];
+	//char buffer[10000];
 
 	if (block_manager == NULL)
 		return ;
 	block_manager->is_free = 1;
-	write(1, buffer, sprintf(buffer, "free success\n"));
+	//write(1, buffer, sprintf(buffer, "free success\n"));
 	//defragller(ptr_zone, first_zone);
 	(void)first_zone;
 }
 
 void
 free(void * ptr) {
-	char buffer[10000];
-	write(1, buffer, sprintf(buffer, "calling free on %p\n", ptr));
+	//char buffer[10000];
+	//write(1, buffer, sprintf(buffer, "calling free on %p\n", ptr));
 	t_zone_header * ptr_zone = NULL;
 	t_zone_header ** first_zone = NULL;
 

@@ -13,7 +13,14 @@ calculate_padded_size(size_t size) {
 void *
 get_mmap(size_t size) {
 	//write(1, buffer, sprintf(buffer, "calling get_mmap for %li pages\n", size / getpagesize()));
-	return (mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, 0, 0));
+
+	//char buffer[10000];
+	void * result = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, 0, 0);
+	//if (result == MAP_FAILED)
+	//	write(1, buffer, sprintf(buffer, "get_mmap FAIL!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"));
+	//else
+		//write(1, buffer, sprintf(buffer, "get_mmap SUCCESS!!\n"));
+	return (result);
 }
 
 void *
@@ -72,7 +79,7 @@ get_block_manager(void * ptr, t_zone_header * zone) {
 		if ((void*)block_manager + sizeof(t_block_manager) == ptr)
 			return (block_manager);
 
-	char buffer[10000];
-		write(1, buffer, sprintf(buffer, "get_block_manager return NULL\n"));
+	//char buffer[10000];
+	//	write(1, buffer, sprintf(buffer, "get_block_manager return NULL\n"));
 	return (NULL);
 }

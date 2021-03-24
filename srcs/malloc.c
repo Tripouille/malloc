@@ -82,13 +82,13 @@ get_memory(size_t size) {
 
 void *
 malloc(size_t size) {
-	char buffer[10000];
-	write(1, buffer, sprintf(buffer, "calling malloc size %lu ", size));
+	//char buffer[10000];
+	//write(1, buffer, sprintf(buffer, "calling malloc size %lu ", size));
 	if (size)
 	{
 
 		void * result = get_memory(size);
-		write(1, buffer, sprintf(buffer, "return = %p\n", result));
+		//write(1, buffer, sprintf(buffer, "return = %p\n", result));
 		//show_alloc_mem();
 		return (result);
 	}
