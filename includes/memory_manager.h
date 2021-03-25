@@ -5,12 +5,15 @@
 # include <sys/mman.h>
 # include <stdbool.h>
 
-enum memory_settings {TINY = 1, SMALL = 2, BLOCK_PER_ZONE = 1};
+#define ZONE_HEADER_SHIFT(p) ((void*)p + sizeof(t_zone_header))
+#define BLOCK_MANAGER_SHIFT(p) ((void*)p + sizeof(t_block_manager))
+
+enum memory_settings {TINY = 40960, SMALL = 4096, BLOCK_PER_ZONE = 100};
 
 typedef struct				s_block_manager
 {
 	size_t			block_size;
-	char			is_free;
+	size_t			is_free;
 } 	t_block_manager;
 //} __attribute__((packed))	t_block_manager;
 
@@ -28,6 +31,7 @@ typedef struct s_memory_manager
 }				t_memory_manager;
 
 extern t_memory_manager memory_manager;
+extern char buffer[10000];
 
 size_t				calculate_padded_size(size_t size);
 void *				get_mmap(size_t size);

@@ -53,8 +53,8 @@ defragller(t_zone_header * zone, t_zone_header ** first_zone) {
 	}
 	if (zone_is_completely_free(zone))
 		clean_memory_manager(first_zone);
-}*/
-
+}
+*/
 static void
 free_block(void * ptr, t_zone_header * ptr_zone, t_zone_header ** first_zone) {
 	t_block_manager * block_manager = get_block_manager(ptr, ptr_zone);

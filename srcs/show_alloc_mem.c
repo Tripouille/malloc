@@ -10,7 +10,7 @@ show_alloc_tiny(char buffer[]) {
 		(size_t)((void*)tiny + sizeof(t_zone_header) + tiny->zone_size - (void*)block_manager) > sizeof(block_manager);
 		block_manager = (void*)block_manager + sizeof(t_block_manager) + block_manager->block_size)
 			if (!block_manager->is_free || 1) {
-				write(1, buffer, sprintf(buffer, "%p - %p : %lu octets / free = %i\n", (void*)block_manager + sizeof(t_block_manager),
+				write(1, buffer, sprintf(buffer, "%p - %p : %lu octets / free = %lu\n", (void*)block_manager + sizeof(t_block_manager),
 						(void*)block_manager + sizeof(t_block_manager) + block_manager->block_size, block_manager->block_size, block_manager->is_free));
 				tiny_total += block_manager->block_size;
 			}
@@ -27,7 +27,7 @@ show_alloc_small(char buffer[]) {
 		(size_t)((void*)small + sizeof(t_zone_header) + small->zone_size - (void*)block_manager) > sizeof(block_manager);
 		block_manager = (void*)block_manager + sizeof(t_block_manager) + block_manager->block_size)
 			if (!block_manager->is_free || 1) {
-				write(1, buffer, sprintf(buffer, "%p - %p : %lu octets / free = %i\n", (void*)block_manager + sizeof(t_block_manager),
+				write(1, buffer, sprintf(buffer, "%p - %p : %lu octets / free = %lu\n", (void*)block_manager + sizeof(t_block_manager),
 						(void*)block_manager + sizeof(t_block_manager) + block_manager->block_size, block_manager->block_size, block_manager->is_free));
 				small_total += block_manager->block_size;
 			}
@@ -44,7 +44,7 @@ show_alloc_large(char buffer[]) {
 	{
 		block_manager = (void*)large + sizeof(t_zone_header);
 		if (!block_manager->is_free || 1) {
-			write(1, buffer, sprintf(buffer, "%p - %p : %lu octets / free = %i\n", (void*)block_manager + sizeof(t_block_manager),
+			write(1, buffer, sprintf(buffer, "%p - %p : %lu octets / free = %lu\n", (void*)block_manager + sizeof(t_block_manager),
 					(void*)block_manager + sizeof(t_block_manager) + block_manager->block_size, block_manager->block_size, block_manager->is_free));
 			large_total += block_manager->block_size;
 		}
