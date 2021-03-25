@@ -39,7 +39,6 @@ realloc(void *ptr, size_t size) {
 	if (zone == NULL)
 	{
 		//write(1, buffer, sprintf(buffer, "zone == NULL\n"));
-		return (malloc(size));
 		return (NULL);
 	}
 	t_block_manager *block_manager = get_block_manager(ptr, zone);

@@ -1,4 +1,6 @@
 #include "memory_manager.h"
+# include "ft_malloc.h"
+
 
 t_memory_manager memory_manager;
 char buffer[10000];
@@ -45,13 +47,14 @@ get_ptr_zone_in_specific_zone(void * ptr, t_zone_header *** first_zone, t_zone_h
 	{
 		start = ZONE_HEADER_SHIFT(actual_zone) + sizeof(t_block_manager);
 		end = start + actual_zone->zone_size;
-		if (start <= ptr && ptr < end)
+		if (ptr >= start && ptr < end)
 		{
-			write(1, buffer, sprintf(buffer, "ptr found in zone\n"));
 			*first_zone = specific_zone;
 			return (actual_zone);
 		}
 	}
+	write(1, buffer, sprintf(buffer, "ptr %p not found in all zone\n", ptr));
+	show_alloc_mem();
 	return (NULL);
 }
 
@@ -76,7 +79,6 @@ t_block_manager *
 get_block_manager(void * ptr, t_zone_header * zone) {
 
 	void *	zone_end = ZONE_HEADER_SHIFT(zone) + zone->zone_size;
-
 
 	for (t_block_manager * block_manager = ZONE_HEADER_SHIFT(zone);
 	BLOCK_MANAGER_SHIFT(block_manager) < zone_end;

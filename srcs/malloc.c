@@ -31,7 +31,7 @@ get_block_in_zone(size_t block_size, size_t zone_size, t_zone_header ** zone_hea
 	do {
 		if (*zone_header == NULL)
 		{
-			write(1, buffer, sprintf(buffer, "zone_header == NULL\n"));
+			//write(1, buffer, sprintf(buffer, "zone_header == NULL\n"));
 			if ((*zone_header = get_new_zone(zone_size)) == NULL)
 				return (NULL);
 		}
@@ -89,8 +89,8 @@ malloc(size_t size) {
 	{
 		size = (size + 15) & ~15;
 		void * result = get_memory(size);
-		write(1, buffer, sprintf(buffer, "return = %p\n", result));
-		show_alloc_mem();
+		//write(1, buffer, sprintf(buffer, "return = %p\n", result));
+		//show_alloc_mem();
 		return (result);
 	}
 	return (NULL);

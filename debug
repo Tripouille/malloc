@@ -1,0 +1,69 @@
+zone_header == NULL
+return = 0x7f6a755e4020
+return = 0x7f6a755e4210
+return = 0x7f6a755e42a0
+return = 0x7f6a755e4020
+return = 0x7f6a755e4040
+return = 0x7f6a755e40d0
+return = 0x7f6a755e42a0
+return = 0x7f6a755e40f0
+return = 0x7f6a755e46b0
+return = 0x7f6a755e4c00
+return = 0x7f6a755e4cf0
+return = 0x7f6a755e4170
+return = 0x7f6a755e4210
+return = 0x7f6a755e45c0
+return = 0x7f6a755e4eb0
+return = 0x7f6a755e4f70
+return = 0x7f6a755e4ff0
+return = 0x7f6a755e5050
+return = 0x7f6a755e4650
+return = 0x7f6a755e4670
+return = 0x7f6a755e5120
+return = 0x7f6a755e5140
+return = 0x7f6a755e5160
+return = 0x7f6a755e5180
+return = 0x7f6a755e51a0
+return = 0x7f6a755e51c0
+return = 0x7f6a755e51e0
+return = 0x7f6a755e5200
+return = 0x7f6a755e5220
+return = 0x7f6a755e5240
+return = 0x7f6a755e5260
+return = 0x7f6a755e5280
+return = 0x7f6a755e52c0
+return = 0x7f6a755e52e0
+return = 0x7f6a755e5330
+return = 0x7f6a755e5380
+return = 0x7f6a755e5410
+return = 0x7f6a755ea240
+return = 0x7f6a755ea270
+return = 0x7f6a755ea290
+return = 0x7f6a755f22d0
+return = 0x7f6a755f22f0
+return = 0x7f6a755f2320
+return = 0x7f6a755f2340
+return = 0x7f6a755f2360
+return = 0x7f6a755f2380
+return = 0x7f6a755f23a0
+return = 0x7f6a755f23c0
+return = 0x7f6a755f23e0
+return = 0x7f6a755f2400
+return = 0x7f6a755f2420
+return = 0x7f6a755f2440
+return = 0x7f6a755f2460
+return = 0x7f6a755ea290
+return = 0x7f6a755ea3e0
+debug
+deps
+includes
+libft_malloc.so
+libft_malloc.so_x86_64_Linux.so
+lol
+Makefile
+objs
+srcs
+test0
+test1
+test2
+test.sh
