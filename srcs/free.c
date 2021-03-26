@@ -12,16 +12,18 @@ zone_is_completely_free(t_zone_header * zone) {
 
 static void
 clean_memory_manager(t_ptr_infos * infos) {
-	(void)infos; return;
+	void * garbage = *infos->actual_zone;
+	size_t garbage_size = (*infos->actual_zone)->zone_size;
+
 	if (infos->prev_zone != NULL)
 	{
 		infos->prev_zone->next_zone_header = (*infos->actual_zone)->next_zone_header;
-		munmap(infos->actual_zone, sizeof(t_zone_header) + (*infos->actual_zone)->zone_size);
+		munmap(garbage, garbage_size);
 	}
 	else if (zone_is_large(*infos->actual_zone) || (*infos->actual_zone)->next_zone_header != NULL)
 	{
-		*infos->actual_zone= (*infos->actual_zone)->next_zone_header;
-		munmap(infos->actual_zone, sizeof(t_zone_header) + (*infos->actual_zone)->zone_size);
+		*infos->actual_zone = (*infos->actual_zone)->next_zone_header;
+		munmap(garbage, garbage_size);
 	}
 }
 
