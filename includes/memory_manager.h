@@ -9,7 +9,7 @@
 #define BLOCK_MANAGER_SHIFT(bm) ((void*)bm + sizeof(t_block_manager))
 #define NEXT_BLOCK_MANAGER(bm) (BLOCK_MANAGER_SHIFT(bm) + bm->block_size)
 
-enum memory_settings {TINY = 4096, SMALL = 8192, BLOCK_PER_ZONE = 100};
+enum memory_settings {TINY = 1024, SMALL = 4096, BLOCK_PER_ZONE = 100};
 
 typedef struct				s_block_manager
 {

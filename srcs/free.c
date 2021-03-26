@@ -1,5 +1,5 @@
 #include "ft_malloc.h"
-
+/*
 static bool
 zone_is_completely_free(t_zone_header * zone) {
 	t_block_manager * block_manager = ZONE_HEADER_SHIFT(zone);
@@ -8,8 +8,8 @@ zone_is_completely_free(t_zone_header * zone) {
 		return (true);
 	return (zone->zone_size == sizeof(t_block_manager) + block_manager->block_size
 	&& block_manager->is_free);
-}
-
+}*/
+/*
 static void
 clean_memory_manager(t_ptr_infos * infos) {
 	void * garbage = *infos->actual_zone;
@@ -27,7 +27,7 @@ clean_memory_manager(t_ptr_infos * infos) {
 		*infos->actual_zone = (*infos->actual_zone)->next_zone_header;
 		munmap(garbage, garbage_size);
 	}
-}
+}*/
 
 static void
 defragller(t_ptr_infos * infos) {
@@ -49,8 +49,8 @@ static void
 free_block(t_ptr_infos * infos) {
 	infos->block_manager->is_free = 1;
 	defragller(infos);
-	if (zone_is_completely_free(*infos->actual_zone))
-		clean_memory_manager(infos);
+	//if (zone_is_completely_free(*infos->actual_zone))
+	//	clean_memory_manager(infos);
 }
 
 void

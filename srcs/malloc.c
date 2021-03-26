@@ -82,6 +82,7 @@ get_memory(size_t size) {
 
 void *
 malloc(size_t size) {
+	//write(1, buffer, sprintf(buffer, "calling malloc\n"));
 	if (size)
 	{
 		size = (size + 15) & ~15;
