@@ -1,5 +1,5 @@
 #include "memory_manager.h"
-
+/*
 static size_t
 show_alloc_tiny(char buffer[]) {
 	size_t tiny_total = 0;
@@ -33,7 +33,7 @@ show_alloc_small(char buffer[]) {
 			}
 	return (small_total);
 }
-
+*/
 static size_t
 show_alloc_large(char buffer[]) {
 	size_t              large_total = 0;
@@ -57,8 +57,8 @@ show_alloc_mem(void) {
 	char buffer[1000];
 	size_t total = 0;
 	//write(1, "\n", 1);
-	total += show_alloc_tiny(buffer);
-	total += show_alloc_small(buffer);
+	//total += show_alloc_tiny(buffer);
+	//total += show_alloc_small(buffer);
 	total += show_alloc_large(buffer);
 	write(1, buffer, sprintf(buffer, "Total : %lu octets\n\n", total));
 }

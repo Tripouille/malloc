@@ -9,33 +9,33 @@
 #define BLOCK_MANAGER_SHIFT(bm) ((void*)bm + sizeof(t_block_manager))
 #define NEXT_BLOCK_MANAGER(bm) (BLOCK_MANAGER_SHIFT(bm) + bm->block_size)
 
-enum memory_settings {TINY = 40960, SMALL = 4096, BLOCK_PER_ZONE = 100};
+enum memory_settings {TINY = 4096, SMALL = 8192, BLOCK_PER_ZONE = 100};
 
 typedef struct				s_block_manager
 {
-	size_t			block_size;
-	size_t			is_free;
+	size_t					block_size;
+	size_t					is_free;
 } 							t_block_manager;
 
 typedef struct	s_zone_header
 {
-	struct s_zone_header			*next_zone_header;
-	size_t							zone_size;
+	struct s_zone_header	*next_zone_header;
+	size_t					zone_size;
 }				t_zone_header;
 
 typedef struct s_memory_manager
 {
-	t_zone_header	*tiny;
-	t_zone_header	*small;
-	t_zone_header	*large;
+	t_zone_header			*tiny;
+	t_zone_header			*small;
+	t_zone_header			*large;
 }				t_memory_manager;
 
 typedef struct s_ptr_infos
 {
-	t_zone_header	*prev_zone;
-	t_zone_header	**actual_zone;
-	t_block_manager *block_manager;
-	t_block_manager *furthest_prev_allocated_block_manager;
+	t_zone_header			*prev_zone;
+	t_zone_header			**actual_zone;
+	t_block_manager 		*block_manager;
+	t_block_manager			 *furthest_prev_allocated_block_manager;
 }				t_ptr_infos;
 
 extern t_memory_manager memory_manager;

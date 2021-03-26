@@ -7,7 +7,7 @@ char buffer[10000];
 
 bool
 zone_is_large(t_zone_header * zone) {
-	return (zone->zone_size - sizeof(t_block_manager) > SMALL);
+	return (((t_block_manager*)ZONE_HEADER_SHIFT(zone))->block_size > SMALL);
 }
 
 size_t
