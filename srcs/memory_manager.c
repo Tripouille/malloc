@@ -38,15 +38,15 @@ get_new_zone(size_t size) {
 static bool
 try_set_ptr_zone_info(void * ptr, t_zone_header ** first_zone_header,
 								t_ptr_infos *infos) {
-	infos->prev_zone = first_zone_header;
+	infos->prev_zone = NULL;
 
-	for (infos->actual_zone = *first_zone_header;
-	infos->actual_zone != NULL; infos->actual_zone = infos->actual_zone->next_zone_header)
+	for (infos->actual_zone = first_zone_header;
+	*infos->actual_zone != NULL; infos->actual_zone = &(*infos->actual_zone)->next_zone_header)
 	{
-		if (ptr >= ZONE_HEADER_SHIFT(infos->actual_zone)
-		&& ptr < ZONE_HEADER_SHIFT(infos->actual_zone) + infos->actual_zone->zone_size)
+		if (ptr >= ZONE_HEADER_SHIFT(*infos->actual_zone)
+		&& ptr < ZONE_HEADER_SHIFT(*infos->actual_zone) + (*infos->actual_zone)->zone_size)
 			return (true);
-		infos->prev_zone = &infos->actual_zone;
+		infos->prev_zone = *infos->actual_zone;
 	}
 	return (false);
 }
@@ -66,8 +66,8 @@ set_ptr_info(void * ptr, t_ptr_infos *infos) {
 		return (false);
 	
 	infos->furthest_prev_allocated_block_manager = NULL;
-	void *	zone_end = ZONE_HEADER_SHIFT(infos->actual_zone) + infos->actual_zone->zone_size;
-	for (infos->block_manager = ZONE_HEADER_SHIFT(infos->actual_zone);
+	void *	zone_end = ZONE_HEADER_SHIFT(infos->actual_zone) + (*infos->actual_zone)->zone_size;
+	for (infos->block_manager = ZONE_HEADER_SHIFT(*infos->actual_zone);
 	BLOCK_MANAGER_SHIFT(infos->block_manager) < zone_end;
 	infos->block_manager = NEXT_BLOCK_MANAGER(infos->block_manager))
 	{

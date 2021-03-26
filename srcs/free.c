@@ -15,21 +15,21 @@ clean_memory_manager(t_ptr_infos * infos) {
 	(void)infos; return;
 	if (infos->prev_zone != NULL)
 	{
-		(*infos->prev_zone)->next_zone_header = infos->actual_zone->next_zone_header;
-		munmap(infos->actual_zone, sizeof(t_zone_header) + infos->actual_zone->zone_size);
+		infos->prev_zone->next_zone_header = (*infos->actual_zone)->next_zone_header;
+		munmap(infos->actual_zone, sizeof(t_zone_header) + (*infos->actual_zone)->zone_size);
 	}
-	else if (zone_is_large(infos->actual_zone) || infos->actual_zone->next_zone_header != NULL)
+	else if (zone_is_large(*infos->actual_zone) || (*infos->actual_zone)->next_zone_header != NULL)
 	{
-		*infos->prev_zone = infos->actual_zone->next_zone_header;
-		munmap(infos->actual_zone, sizeof(t_zone_header) + infos->actual_zone->zone_size);
+		*infos->actual_zone= (*infos->actual_zone)->next_zone_header;
+		munmap(infos->actual_zone, sizeof(t_zone_header) + (*infos->actual_zone)->zone_size);
 	}
 }
 
 static void
 defragller(t_ptr_infos * infos) {
-	void *	zone_end = ZONE_HEADER_SHIFT(infos->actual_zone) + infos->actual_zone->zone_size;
+	void *	zone_end = ZONE_HEADER_SHIFT(*infos->actual_zone) + (*infos->actual_zone)->zone_size;
 	t_block_manager * furthest_prev_free_block_manager = infos->furthest_prev_allocated_block_manager == NULL ?
-									ZONE_HEADER_SHIFT(infos->actual_zone) : NEXT_BLOCK_MANAGER(infos->furthest_prev_allocated_block_manager);
+									ZONE_HEADER_SHIFT(*infos->actual_zone) : NEXT_BLOCK_MANAGER(infos->furthest_prev_allocated_block_manager);
 	t_block_manager * furthest_next_allocated_block_manager = infos->block_manager;
 
 	while (BLOCK_MANAGER_SHIFT(furthest_next_allocated_block_manager) < zone_end
@@ -46,7 +46,7 @@ free_block(t_ptr_infos * infos) {
 
 	infos->block_manager->is_free = 1;
 	defragller(infos);
-	if (zone_is_completely_free(infos->actual_zone))
+	if (zone_is_completely_free(*infos->actual_zone))
 		clean_memory_manager(infos);
 }
 
