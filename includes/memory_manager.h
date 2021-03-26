@@ -41,10 +41,10 @@ typedef struct s_ptr_infos
 extern t_memory_manager memory_manager;
 extern char buffer[10000];
 
+bool				zone_is_large(t_zone_header * zone);
 size_t				calculate_padded_size(size_t size);
 void *				get_mmap(size_t size);
 void *				get_new_zone(size_t size);
 bool				set_ptr_info(void * ptr, t_ptr_infos *infos);
-bool				zone_is_large(t_zone_header * zone);
 
 #endif

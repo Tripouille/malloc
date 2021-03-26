@@ -31,16 +31,7 @@ clean_memory_manager(t_zone_header ** first_zone) {
 	}
 }*/
 
-static t_block_manager *
-get_furthest_next_allocated_block_manager(t_block_manager * release_block_manager, t_zone_header * actual_zone) {
-	void *	zone_end = ZONE_HEADER_SHIFT(actual_zone) + actual_zone->zone_size;
-	t_block_manager * actual_block_manager = NULL;
 
-	for (actual_block_manager = release_block_manager;
-	BLOCK_MANAGER_SHIFT(actual_block_manager) < zone_end && actual_block_manager->is_free;
-	actual_block_manager = NEXT_BLOCK_MANAGER(actual_block_manager));
-
-	return (actual_block_manager);
 /*
 		if (block_manager->is_free) {
 			t_block_manager * next_block_manager = (void*)block_manager + sizeof(t_block_manager)
@@ -60,20 +51,27 @@ get_furthest_next_allocated_block_manager(t_block_manager * release_block_manage
 		}
 	}*/
 	
-}
 
+/*
 static void
-defragller(t_block_manager * release_block_manager, t_zone_header * actual_zone) {
-	t_block_manager * furthest_next_allocated_block_manager = get_furthest_next_allocated_block_manager(release_block_manager, actual_zone);
-	(void)furthest_next_allocated_block_manager;
+defragller(t_ptr_infos * infos) {
+	void *	zone_end = ZONE_HEADER_SHIFT(infos->actual_zone) + infos->actual_zone->zone_size;
+	t_block_manager * furthest_prev_free_block_manager = NEXT_BLOCK_MANAGER(infos->furthest_prev_allocated_block_manager);
+	t_block_manager * furthest_next_allocated_block_manager = infos->block_manager;
 
-}
+	while (NEXT_BLOCK_MANAGER(furthest_next_allocated_block_manager) < zone_end && furthest_next_allocated_block_manager->is_free)
+		furthest_next_allocated_block_manager = NEXT_BLOCK_MANAGER(furthest_next_allocated_block_manager);
+	
+	if (NEXT_BLOCK_MANAGER(furthest_prev_free_block_manager) != furthest_next_allocated_block_manager)
+		furthest_prev_free_block_manager->block_size = (void*)furthest_next_allocated_block_manager
+										- (void*)furthest_prev_free_block_manager - sizeof(t_block_manager);
+}*/
 
 static void
 free_block(t_ptr_infos * infos) {
 
 	infos->block_manager->is_free = 1;
-	defragller(infos->block_manager, infos->actual_zone);
+	//defragller(infos);
 	//if (zone_is_completely_free(infos->actual_zone))
 		//clean_memory_manager(infos);
 }

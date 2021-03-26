@@ -51,7 +51,7 @@ try_set_ptr_zone_info(void * ptr, t_zone_header * first_zone_header,
 	return (false);
 }
 
-bool
+static bool
 set_ptr_zone_info(void * ptr, t_ptr_infos *infos) {
 	if (try_set_ptr_zone_info(ptr, memory_manager.tiny, infos)
 	|| try_set_ptr_zone_info(ptr, memory_manager.small, infos)
