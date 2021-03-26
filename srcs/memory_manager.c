@@ -36,26 +36,26 @@ get_new_zone(size_t size) {
 }
 
 static bool
-try_set_ptr_zone_info(void * ptr, t_zone_header * first_zone_header,
+try_set_ptr_zone_info(void * ptr, t_zone_header ** first_zone_header,
 								t_ptr_infos *infos) {
-	infos->prev_zone = NULL;
+	infos->prev_zone = first_zone_header;
 
-	for (infos->actual_zone = first_zone_header;
+	for (infos->actual_zone = *first_zone_header;
 	infos->actual_zone != NULL; infos->actual_zone = infos->actual_zone->next_zone_header)
 	{
 		if (ptr >= ZONE_HEADER_SHIFT(infos->actual_zone)
 		&& ptr < ZONE_HEADER_SHIFT(infos->actual_zone) + infos->actual_zone->zone_size)
 			return (true);
-		infos->prev_zone = infos->actual_zone;
+		infos->prev_zone = &infos->actual_zone;
 	}
 	return (false);
 }
 
 static bool
 set_ptr_zone_info(void * ptr, t_ptr_infos *infos) {
-	if (try_set_ptr_zone_info(ptr, memory_manager.tiny, infos)
-	|| try_set_ptr_zone_info(ptr, memory_manager.small, infos)
-	|| try_set_ptr_zone_info(ptr, memory_manager.large, infos))
+	if (try_set_ptr_zone_info(ptr, &memory_manager.tiny, infos)
+	|| try_set_ptr_zone_info(ptr, &memory_manager.small, infos)
+	|| try_set_ptr_zone_info(ptr, &memory_manager.large, infos))
 		return (true);
 	return (false);
 }
@@ -65,15 +65,16 @@ set_ptr_info(void * ptr, t_ptr_infos *infos) {
 	if (!set_ptr_zone_info(ptr, infos))
 		return (false);
 	
+	infos->furthest_prev_allocated_block_manager = NULL;
 	void *	zone_end = ZONE_HEADER_SHIFT(infos->actual_zone) + infos->actual_zone->zone_size;
 	for (infos->block_manager = ZONE_HEADER_SHIFT(infos->actual_zone);
 	BLOCK_MANAGER_SHIFT(infos->block_manager) < zone_end;
 	infos->block_manager = NEXT_BLOCK_MANAGER(infos->block_manager))
 	{
-		if (!infos->block_manager->is_free)
-			infos->furthest_prev_allocated_block_manager = infos->block_manager ;
 		if (BLOCK_MANAGER_SHIFT(infos->block_manager) == ptr)
 			return (true);
+		if (!infos->block_manager->is_free)
+			infos->furthest_prev_allocated_block_manager = infos->block_manager;
 	}
 	return (false);
 }
