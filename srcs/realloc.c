@@ -20,10 +20,7 @@ void *
 realloc(void *ptr, size_t size) {
 	//char buffer[10000];
 	//write(1, buffer, sprintf(buffer, "calling realloc on %p and size %lu\n", ptr, size));
-
-
-	t_zone_header *		zone = NULL;
-	t_zone_header **	first_zone = NULL;
+	t_ptr_infos infos;
 
 	if (ptr == NULL)
 	{
@@ -35,19 +32,9 @@ realloc(void *ptr, size_t size) {
 		return (NULL);
 	}
 	//return (NULL);
-	zone = get_ptr_zone(ptr, &first_zone);
-	if (zone == NULL)
-	{
-		//write(1, buffer, sprintf(buffer, "zone == NULL\n"));
+	if (!set_ptr_info(ptr, &infos))
 		return (NULL);
-	}
-	t_block_manager *block_manager = get_block_manager(ptr, zone);
-	if (block_manager == NULL)
-	{
-		//write(1, buffer, sprintf(buffer, "block_manager == NULL\n"));
-		return (NULL);
-	}
-	//if (is_large_zone(zone) && zone->zone_size - sizeof(t_block_manager) >= size
+	//if (zone_is_large(zone) && zone->zone_size - sizeof(t_block_manager) >= size
 	//|| (size < block_manager->block_size && block_manager->block_size - size <= sizeof(t_block_manager)))
 		//return (ptr);
 	void * new_zone = NULL;
@@ -55,7 +42,7 @@ realloc(void *ptr, size_t size) {
 	new_zone = malloc(size);
 	if (new_zone == NULL)
 		return (NULL);
-	memmove(new_zone, ptr, min(size, block_manager->block_size));
+	memmove(new_zone, ptr, min(size, infos.block_manager->block_size));
 	//if (memcmp(new_zone, ptr, min(size, block_manager->block_size)))
 		//write(1, buffer, sprintf(buffer, "realloc de merde\n"));
 	//write(1, buffer, sprintf(buffer, "avant le free\n"));
@@ -63,7 +50,7 @@ realloc(void *ptr, size_t size) {
 	//write(1, buffer, sprintf(buffer, "realloc return new_zone = %p\n", new_zone));
 	return (new_zone);
 
-	/*if (is_large_zone(zone))
+	/*if (zone_is_large(zone))
 	{
 		new_zone = malloc(size);
 		if (new_zone == NULL)

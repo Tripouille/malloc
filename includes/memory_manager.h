@@ -5,8 +5,9 @@
 # include <sys/mman.h>
 # include <stdbool.h>
 
-#define ZONE_HEADER_SHIFT(p) ((void*)p + sizeof(t_zone_header))
-#define BLOCK_MANAGER_SHIFT(p) ((void*)p + sizeof(t_block_manager))
+#define ZONE_HEADER_SHIFT(z) ((void*)z + sizeof(t_zone_header))
+#define BLOCK_MANAGER_SHIFT(bm) ((void*)bm + sizeof(t_block_manager))
+#define NEXT_BLOCK_MANAGER(bm) (BLOCK_MANAGER_SHIFT(bm) + bm->block_size)
 
 enum memory_settings {TINY = 40960, SMALL = 4096, BLOCK_PER_ZONE = 100};
 
@@ -14,8 +15,7 @@ typedef struct				s_block_manager
 {
 	size_t			block_size;
 	size_t			is_free;
-} 	t_block_manager;
-//} __attribute__((packed))	t_block_manager;
+} 							t_block_manager;
 
 typedef struct	s_zone_header
 {
@@ -30,14 +30,21 @@ typedef struct s_memory_manager
 	t_zone_header	*large;
 }				t_memory_manager;
 
+typedef struct s_ptr_infos
+{
+	t_zone_header	*prev_zone;
+	t_zone_header	*actual_zone;
+	t_block_manager *block_manager;
+	t_block_manager *furthest_prev_allocated_block_manager;
+}				t_ptr_infos;
+
 extern t_memory_manager memory_manager;
 extern char buffer[10000];
 
 size_t				calculate_padded_size(size_t size);
 void *				get_mmap(size_t size);
 void *				get_new_zone(size_t size);
-t_zone_header *		get_ptr_zone(void * ptr, t_zone_header *** first_zone);
-bool				is_large_zone(t_zone_header * zone);
-t_block_manager *	get_block_manager(void * ptr, t_zone_header * zone);
+bool				set_ptr_info(void * ptr, t_ptr_infos *infos);
+bool				zone_is_large(t_zone_header * zone);
 
 #endif

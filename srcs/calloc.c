@@ -2,7 +2,8 @@
 #include <strings.h>
 
 void *calloc(size_t nmemb, size_t size) {
-	if (nmemb * size / size != nmemb)
+
+	if (nmemb > ULONG_MAX / size)
 		return (NULL);
 	void * ptr = malloc(nmemb * size);
 

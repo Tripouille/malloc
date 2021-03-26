@@ -1,10 +1,14 @@
 #include "memory_manager.h"
 # include "ft_malloc.h"
 
-
 t_memory_manager memory_manager;
 char buffer[10000];
 //write(1, buffer, sprintf(buffer, "calling get_mmap for %li pages\n", size / getpagesize()));
+
+bool
+zone_is_large(t_zone_header * zone) {
+	return (zone->zone_size - sizeof(t_block_manager) > SMALL);
+}
 
 size_t
 calculate_padded_size(size_t size) {
@@ -14,15 +18,7 @@ calculate_padded_size(size_t size) {
 
 void *
 get_mmap(size_t size) {
-	//write(1, buffer, sprintf(buffer, "calling get_mmap for %li pages\n", size / getpagesize()));
-
-	//char buffer[10000];
-	void * result = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
-	//if (result == MAP_FAILED)
-	//	write(1, buffer, sprintf(buffer, "get_mmap FAIL!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"));
-	//else
-		//write(1, buffer, sprintf(buffer, "get_mmap SUCCESS!!\n"));
-	return (result);
+	return (mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0));
 }
 
 void *
@@ -39,56 +35,45 @@ get_new_zone(size_t size) {
 	return (new_zone);
 }
 
-t_zone_header *
-get_ptr_zone_in_specific_zone(void * ptr, t_zone_header *** first_zone, t_zone_header ** specific_zone) {
-	void * start = NULL;
-	void * end = NULL;
-	for (t_zone_header * actual_zone = *specific_zone; actual_zone != NULL; actual_zone = actual_zone->next_zone_header)
+static bool
+try_set_ptr_zone_info(void * ptr, t_zone_header * first_zone_header,
+								t_ptr_infos *infos) {
+	infos->prev_zone = NULL;
+
+	for (infos->actual_zone = first_zone_header;
+	infos->actual_zone != NULL; infos->actual_zone = infos->actual_zone->next_zone_header)
 	{
-		start = ZONE_HEADER_SHIFT(actual_zone) + sizeof(t_block_manager);
-		end = start + actual_zone->zone_size;
-		if (ptr >= start && ptr < end)
-		{
-			*first_zone = specific_zone;
-			return (actual_zone);
-		}
+		if (ptr >= ZONE_HEADER_SHIFT(infos->actual_zone)
+		&& ptr < ZONE_HEADER_SHIFT(infos->actual_zone) + infos->actual_zone->zone_size)
+			return (true);
+		infos->prev_zone = infos->actual_zone;
 	}
-	write(1, buffer, sprintf(buffer, "ptr %p not found in all zone\n", ptr));
-	show_alloc_mem();
-	return (NULL);
-}
-
-t_zone_header *
-get_ptr_zone(void * ptr, t_zone_header *** first_zone) {
-	return(get_ptr_zone_in_specific_zone(ptr, first_zone, &memory_manager.tiny));
-	/*t_zone_header *		zone = NULL;
-
-	if ((zone = get_ptr_zone_in_specific_zone(ptr, first_zone, &memory_manager.tiny)) != NULL
-	|| (zone = get_ptr_zone_in_specific_zone(ptr, first_zone, &memory_manager.small)) != NULL
-	|| (zone = get_ptr_zone_in_specific_zone(ptr, first_zone, &memory_manager.large)) != NULL)
-		return (zone);
-	return (NULL);*/
+	return (false);
 }
 
 bool
-is_large_zone(t_zone_header * zone) {
-	return (zone->zone_size - sizeof(t_block_manager) > SMALL);
+set_ptr_zone_info(void * ptr, t_ptr_infos *infos) {
+	if (try_set_ptr_zone_info(ptr, memory_manager.tiny, infos)
+	|| try_set_ptr_zone_info(ptr, memory_manager.small, infos)
+	|| try_set_ptr_zone_info(ptr, memory_manager.large, infos))
+		return (true);
+	return (false);
 }
 
-t_block_manager *
-get_block_manager(void * ptr, t_zone_header * zone) {
-
-	void *	zone_end = ZONE_HEADER_SHIFT(zone) + zone->zone_size;
-
-	for (t_block_manager * block_manager = ZONE_HEADER_SHIFT(zone);
-	BLOCK_MANAGER_SHIFT(block_manager) < zone_end;
-	block_manager = BLOCK_MANAGER_SHIFT(block_manager) + block_manager->block_size)
-		if (BLOCK_MANAGER_SHIFT(block_manager) == ptr)
-			return (block_manager);
-
-	//char buffer[10000];
-	//	write(1, buffer, sprintf(buffer, "get_block_manager return NULL\n"));
-	write(1, buffer, sprintf(buffer, "get_block_manager ptr not found in zone\n"));
-
-	return (NULL);
+bool
+set_ptr_info(void * ptr, t_ptr_infos *infos) {
+	if (!set_ptr_zone_info(ptr, infos))
+		return (false);
+	
+	void *	zone_end = ZONE_HEADER_SHIFT(infos->actual_zone) + infos->actual_zone->zone_size;
+	for (infos->block_manager = ZONE_HEADER_SHIFT(infos->actual_zone);
+	BLOCK_MANAGER_SHIFT(infos->block_manager) < zone_end;
+	infos->block_manager = NEXT_BLOCK_MANAGER(infos->block_manager))
+	{
+		if (!infos->block_manager->is_free)
+			infos->furthest_prev_allocated_block_manager = infos->block_manager ;
+		if (BLOCK_MANAGER_SHIFT(infos->block_manager) == ptr)
+			return (true);
+	}
+	return (false);
 }

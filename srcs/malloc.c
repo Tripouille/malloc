@@ -84,7 +84,6 @@ get_memory(size_t size) {
 
 void *
 malloc(size_t size) {
-
 	if (size)
 	{
 		size = (size + 15) & ~15;
