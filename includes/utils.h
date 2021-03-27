@@ -4,6 +4,9 @@
 # include <stdbool.h>
 # include <unistd.h>
 
+#define BASE10 "0123456789"
+#define BASE16 "0123456789ABCDEF"
+
 size_t	min(size_t value1, size_t value2);
 void	memory_move(char * dst, char * src, size_t size);
 bool	align_size(size_t * size);

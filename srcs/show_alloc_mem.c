@@ -3,7 +3,7 @@
 static size_t
 print_block(t_block_manager * block_manager, int fd) {
 	printptr(BLOCK_MANAGER_SHIFT(block_manager), fd); prints(" - ", fd); printptr(NEXT_BLOCK_MANAGER(block_manager), fd);
-	prints(" : ", fd); printnbase(block_manager->block_size, "0123456789", 10, fd); prints(" octets", fd);
+	prints(" : ", fd); printnbase(block_manager->block_size, BASE10, 10, fd); prints(" octets", fd);
 	newline(fd);
 	return (block_manager->block_size);
 }
@@ -40,5 +40,5 @@ show_alloc_mem(void) {
 	total += show_zone(g_memory_manager.small);
 	prints("LARGE : ", 1); printptr(g_memory_manager.large, 1); newline(1);
 	total += show_large();
-	prints("Total : ", 1); printnbase(total, "0123456789", 10, 1); prints(" octets", 1); newline(1);
+	prints("Total : ", 1); printnbase(total, BASE10, 10, 1); prints(" octets", 1); newline(1);
 }

@@ -49,7 +49,7 @@ printnbase(size_t n, char const * base, size_t base_size, int fd) {
 void
 printptr(void * ptr, int fd) {
 	prints("0x", 1);
-	printnbase((size_t)ptr, "0123456789ABCDEF", 16, fd);
+	printnbase((size_t)ptr, BASE16, 16, fd);
 }
 
 void
