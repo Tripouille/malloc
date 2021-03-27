@@ -29,13 +29,16 @@ clean:
 
 fclean: clean
 	rm -rf $(LINK) $(NAME) grademe *.dSYM $(TESTS)
+	rm -rf *.dSYM
 
 re: fclean all
 
 tests: $(TESTS)
 $(TESTS): %: srcs/%.c | $(NAME)
 	@$(CC) -L$(WD) $(CFLAGS) $< -o $@ -lft_malloc
-	@echo -n "$@:" && /usr/bin/time -v ./$@ 2>&1 | grep "Minor (reclaiming a frame) page faults:"
+	@#echo -n "$@:" && /usr/bin/time -v ./$@ 2>&1 | grep "Minor (reclaiming a frame) page faults:"
+	@#/bin/echo -n "$@:" && /usr/bin/time -l ./$@ 2>&1 | grep "page reclaims"
+	@/bin/echo -n "$@:" && /usr/bin/time -l ./$@ 2>&1
 
 .PHONY: all clean fclean re launch $(TESTS)
 -include $(DEPS)

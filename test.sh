@@ -1,3 +1,3 @@
 #!/bin/sh
-export LD_PRELOAD=/home/kali/42/malloc/libft_malloc.so
+export LD_PRELOAD=/Users/jgambard/malloc/libft_malloc.so
 $@

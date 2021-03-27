@@ -7,7 +7,11 @@ char buffer[10000];
 
 bool
 zone_is_large(t_zone_header * zone) {
-	return (((t_block_manager*)ZONE_HEADER_SHIFT(zone))->block_size > SMALL);
+	for (t_zone_header * actual_zone = memory_manager.large;
+	actual_zone != NULL; actual_zone = actual_zone->next_zone_header)
+		if (actual_zone == zone)
+			return (true); 
+	return (false);
 }
 
 size_t
@@ -18,6 +22,7 @@ calculate_padded_size(size_t size) {
 
 void *
 get_mmap(size_t size) {
+	write(1, buffer, sprintf(buffer, "get_mmap pages = %lu\n", size / getpagesize()));
 	return (mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0));
 }
 

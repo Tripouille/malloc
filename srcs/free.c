@@ -1,5 +1,5 @@
 #include "ft_malloc.h"
-/*
+
 static bool
 zone_is_completely_free(t_zone_header * zone) {
 	t_block_manager * block_manager = ZONE_HEADER_SHIFT(zone);
@@ -8,8 +8,8 @@ zone_is_completely_free(t_zone_header * zone) {
 		return (true);
 	return (zone->zone_size == sizeof(t_block_manager) + block_manager->block_size
 	&& block_manager->is_free);
-}*/
-/*
+}
+
 static void
 clean_memory_manager(t_ptr_infos * infos) {
 	void * garbage = *infos->actual_zone;
@@ -17,17 +17,19 @@ clean_memory_manager(t_ptr_infos * infos) {
 
 	if (infos->prev_zone != NULL)
 	{
+		//write(1, buffer, sprintf(buffer, "clean_memory_manager premier if\n"));
 		infos->prev_zone->next_zone_header = (*infos->actual_zone)->next_zone_header;
 		munmap(garbage, garbage_size);
 	}
 	else if (zone_is_large(*infos->actual_zone) || (*infos->actual_zone)->next_zone_header != NULL)
 	{
+		//write(1, buffer, sprintf(buffer, "clean_memory_manager deuxieme if\n"));
 		//if (zone_is_large(*infos->actual_zone))
-		//	write(1, buffer, sprintf(buffer, "freeing large zone = %p\n", BLOCK_MANAGER_SHIFT(infos->block_manager)));
+			//write(1, buffer, sprintf(buffer, "freeing large zone = %p\n", BLOCK_MANAGER_SHIFT(infos->block_manager)));
 		*infos->actual_zone = (*infos->actual_zone)->next_zone_header;
 		munmap(garbage, garbage_size);
 	}
-}*/
+}
 
 static void
 defragller(t_ptr_infos * infos) {
@@ -49,8 +51,8 @@ static void
 free_block(t_ptr_infos * infos) {
 	infos->block_manager->is_free = 1;
 	defragller(infos);
-	//if (zone_is_completely_free(*infos->actual_zone))
-	//	clean_memory_manager(infos);
+	if (zone_is_completely_free(*infos->actual_zone))
+		clean_memory_manager(infos);
 }
 
 void
