@@ -7,7 +7,7 @@ move_into_new_block(t_ptr_infos *infos, size_t size) {
 
 	if ((new_ptr = malloc(size)) == NULL)
 		return (NULL);
-	memmove(new_ptr, actual_ptr, min(size, infos->block_manager->block_size));
+	memory_move(new_ptr, actual_ptr, min(size, infos->block_manager->block_size));
 	free(actual_ptr);
 	return (new_ptr);
 }
@@ -23,7 +23,7 @@ extend_memory(t_ptr_infos *infos, size_t size) {
 		return (move_into_new_block(infos, size));
 	
 	size_t	total_size = infos->block_manager->block_size + next_block_manager->block_size;
-	if (next_block_manager->is_free && total_size > size)
+	if (next_block_manager->is_free && total_size >= size)
 	{
 		infos->block_manager->block_size = size;
 		((t_block_manager*)NEXT_BLOCK_MANAGER(infos->block_manager))->block_size = total_size - size;
@@ -50,7 +50,14 @@ realloc(void *ptr, size_t size) {
 	size = (size + 15) & ~15;
 	if (infos.block_manager->block_size >= size)
 	{
-		write(1, buffer, sprintf(buffer, "realloc bloc size already fit\n"));
+		if (infos.block_manager->block_size - size > sizeof(t_block_manager))
+		{
+			size_t	available_size = infos.block_manager->block_size - size - sizeof(t_block_manager);
+			infos.block_manager->block_size = size;
+			t_block_manager * new_block_manager = NEXT_BLOCK_MANAGER(infos.block_manager);
+			new_block_manager->block_size = available_size;
+			new_block_manager->is_free = 1;
+		}
 		return (ptr);
 	}
 	else

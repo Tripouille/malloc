@@ -8,7 +8,7 @@ find_block_in_zone(size_t block_size, t_zone_header *zone_header) {
 
 	for (t_block_manager *block_manager = zone_start;
 	BLOCK_MANAGER_SHIFT(block_manager) < zone_end;) {
-		if (block_manager->is_free && block_manager->block_size > block_size + sizeof(t_block_manager)) {
+		if (block_manager->is_free && block_manager->block_size >= block_size + sizeof(t_block_manager)) {
 			remaining_size = block_manager->block_size - block_size;
 			block_manager->block_size = block_size;
 			block_manager->is_free = 0;
