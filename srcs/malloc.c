@@ -13,7 +13,7 @@ find_block_in_zone(size_t block_size, t_zone_header *zone_header) {
 			block_manager->block_size = block_size;
 			block_manager->is_free = 0;
 
-			t_block_manager * next_block_manager = BLOCK_MANAGER_SHIFT(block_manager) + block_size;
+			t_block_manager * next_block_manager = NEXT_BLOCK_MANAGER(block_manager);
 			next_block_manager->block_size = remaining_size - sizeof(t_block_manager);
 			next_block_manager->is_free = 1;
 			return (BLOCK_MANAGER_SHIFT(block_manager));
@@ -87,7 +87,7 @@ malloc(size_t size) {
 		void * result = get_memory(size);
 		//write(1, buffer, sprintf(buffer, "return = %p\n", result));
 		//show_alloc_mem();
-		show_alloc_mem();
+		//show_alloc_mem();
 		return (result);
 	}
 	return (NULL);

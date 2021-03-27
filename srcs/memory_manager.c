@@ -22,14 +22,14 @@ calculate_padded_size(size_t size) {
 
 void *
 get_mmap(size_t size) {
-	write(1, buffer, sprintf(buffer, "get_mmap pages = %lu\n", size / getpagesize()));
+	//write(1, buffer, sprintf(buffer, "get_mmap pages = %lu\n", size / getpagesize()));
 	return (mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0));
 }
 
 void *
 get_new_zone(size_t size) {
-	size_t const padded_size = calculate_padded_size(sizeof(t_zone_header) + size);
-	void * new_zone = get_mmap(padded_size);
+	size_t		padded_size = calculate_padded_size(sizeof(t_zone_header) + size);
+	void *		new_zone = get_mmap(padded_size);
 
 	if (new_zone == MAP_FAILED)
 		return (NULL);

@@ -1,14 +1,17 @@
 #include "ft_malloc.h"
 #include <strings.h>
 
-void *calloc(size_t nmemb, size_t size) {
-
+void *
+calloc(size_t nmemb, size_t size) {
 	if (nmemb > ULONG_MAX / size)
 		return (NULL);
-	void * ptr = malloc(nmemb * size);
+
+	size_t	required_size = nmemb * size;
+	char * ptr = (char*)malloc(required_size);
 
 	if (ptr == NULL)
 		return (NULL);
-	bzero(ptr, nmemb * size);
+	while (required_size--)
+		ptr[required_size] = 0;
 	return (ptr);
 }

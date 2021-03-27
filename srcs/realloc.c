@@ -1,21 +1,5 @@
 #include "ft_malloc.h"
 
-size_t
-min(size_t value1, size_t value2) {
-	return (value1 < value2 ? value1 : value2);
-}
-
-void
-memory_move(char *dst, char *src, size_t size) {
-	size_t			i = (dst > src ? size - 1 : 0);
-
-	while(size--)
-	{
-		dst[i] = src[i];
-		i += (dst > src ? -1 : 1);
-	}
-}
-
 void *
 realloc(void *ptr, size_t size) {
 	//char buffer[10000];

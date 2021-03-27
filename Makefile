@@ -6,7 +6,8 @@ ifeq ($(HOSTTYPE),)
 endif
 LINK	= libft_malloc.so
 NAME	= $(LINK)_$(HOSTTYPE).so
-SRCS	= $(addprefix srcs/, memory_manager.c show_alloc_mem.c malloc.c calloc.c free.c realloc.c)
+SRCS	= $(addprefix srcs/, memory_manager.c show_alloc_mem.c malloc.c calloc.c free.c realloc.c \
+								utils.c)
 OBJS	= $(SRCS:srcs/%.c=objs/%.o)
 DEPS	= $(SRCS:srcs/%.c=deps/%.d)
 WD		= $(shell pwd)
@@ -36,7 +37,7 @@ re: fclean all
 tests: $(TESTS)
 $(TESTS): %: tests/%.c | $(NAME)
 	@$(CC) -L$(WD) $(CFLAGS) $< -o $@ -lft_malloc
-	@echo -n "$@:" && /usr/bin/time -v ./$@ 2>&1 #| grep "Minor (reclaiming a frame) page faults:"
+	@echo -n "$@:" && /usr/bin/time -v ./$@ 2>&1 | grep "Minor (reclaiming a frame) page faults:"
 	@#/bin/echo -n "$@:" && /usr/bin/time -l ./$@ 2>&1 | grep "page reclaims"
 	@#/bin/echo -n "$@:" && /usr/bin/time -l ./$@ 2>&1
 
