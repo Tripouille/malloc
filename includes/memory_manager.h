@@ -45,6 +45,7 @@ bool				zone_is_large(t_zone_header * zone);
 size_t				calculate_padded_size(size_t size);
 void *				get_mmap(size_t size);
 void *				get_new_zone(size_t size);
+bool				ptr_is_in_zone(void * ptr, t_zone_header *zone_header);
 bool				set_ptr_info(void * ptr, t_ptr_infos *infos);
 
 #endif

@@ -67,7 +67,7 @@ get_large_zone(size_t block_size) {
 	return (BLOCK_MANAGER_SHIFT(block_manager));
 }
 
-void *
+static void *
 get_memory(size_t size) {
 	if (size <= TINY)
 		return (get_block_in_tiny_zone(size));

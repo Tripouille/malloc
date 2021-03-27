@@ -40,6 +40,13 @@ get_new_zone(size_t size) {
 	return (new_zone);
 }
 
+bool
+ptr_is_in_zone(void * ptr, t_zone_header *zone_header) {
+	return (ptr >= ZONE_HEADER_SHIFT(zone_header)
+	&& ptr < ZONE_HEADER_SHIFT(zone_header) + zone_header->zone_size);
+
+}
+
 static bool
 try_set_ptr_zone_info(void * ptr, t_zone_header ** first_zone_header,
 								t_ptr_infos *infos) {
@@ -48,8 +55,7 @@ try_set_ptr_zone_info(void * ptr, t_zone_header ** first_zone_header,
 	for (infos->actual_zone = first_zone_header;
 	*infos->actual_zone != NULL; infos->actual_zone = &(*infos->actual_zone)->next_zone_header)
 	{
-		if (ptr >= ZONE_HEADER_SHIFT(*infos->actual_zone)
-		&& ptr < ZONE_HEADER_SHIFT(*infos->actual_zone) + (*infos->actual_zone)->zone_size)
+		if (ptr_is_in_zone(ptr, *infos->actual_zone))
 			return (true);
 		infos->prev_zone = *infos->actual_zone;
 	}
