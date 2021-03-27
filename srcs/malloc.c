@@ -79,16 +79,7 @@ get_memory(size_t size) {
 
 void *
 malloc(size_t size) {
-	//return (NULL);
-	//write(1, buffer, sprintf(buffer, "calling malloc\n"));
-	if (size)
-	{
-		size = (size + 15) & ~15;
-		void * result = get_memory(size);
-		//write(1, buffer, sprintf(buffer, "return = %p\n", result));
-		//show_alloc_mem();
-		//show_alloc_mem();
-		return (result);
-	}
+	if (size && align_size(&size))
+		return (get_memory(size));
 	return (NULL);
 }

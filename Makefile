@@ -1,5 +1,5 @@
 .DEFAULT_GOAL = tests
-TESTS 	= test0 test1 test2
+TESTS 	= test0 test1 test2 test3
 
 ifeq ($(HOSTTYPE),)
 	HOSTTYPE := $(shell uname -m)_$(shell uname -s)
@@ -37,7 +37,8 @@ re: fclean all
 tests: $(TESTS)
 $(TESTS): %: tests/%.c | $(NAME)
 	@$(CC) -L$(WD) $(CFLAGS) $< -o $@ -lft_malloc
-	@echo -n "$@:" && /usr/bin/time -v ./$@ 2>&1 | grep "Minor (reclaiming a frame) page faults:"
+	./$@
+	@#echo -n "$@:" && /usr/bin/time -v ./$@ 2>&1 #| grep "Minor (reclaiming a frame) page faults:"
 	@#/bin/echo -n "$@:" && /usr/bin/time -l ./$@ 2>&1 | grep "page reclaims"
 	@#/bin/echo -n "$@:" && /usr/bin/time -l ./$@ 2>&1
 

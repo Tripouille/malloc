@@ -56,7 +56,8 @@ realloc(void *ptr, size_t size) {
 	else if (!set_ptr_info(ptr, &infos))
 		return (NULL);
 
-	size = (size + 15) & ~15;
+	if (!align_size(&size))
+		return (NULL);
 	if (infos.block_manager->block_size >= size)
 	{
 		if (infos.block_manager->block_size - size > sizeof(t_block_manager))

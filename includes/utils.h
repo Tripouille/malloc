@@ -1,8 +1,15 @@
 #ifndef UTILS_H
 # define UTILS_H
 # include <stddef.h>
+# include <stdbool.h>
+# include <unistd.h>
 
-size_t min(size_t value1, size_t value2);
-void memory_move(char *dst, char *src, size_t size);
-
+size_t	min(size_t value1, size_t value2);
+void	memory_move(char * dst, char * src, size_t size);
+bool	align_size(size_t * size);
+size_t	slen(char const * s);
+void	prints(char const * s, int fd);
+void	printnbase(size_t n, char const * base, size_t base_size, int fd);
+void	printptr(void * ptr, int fd);
+void	newline(int fd);
 #endif

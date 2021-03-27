@@ -4,6 +4,7 @@
 # include <unistd.h>
 # include <sys/mman.h>
 # include <stdbool.h>
+# include "utils.h"
 
 #define ZONE_HEADER_SHIFT(z) ((void*)z + sizeof(t_zone_header))
 #define BLOCK_MANAGER_SHIFT(bm) ((void*)bm + sizeof(t_block_manager))

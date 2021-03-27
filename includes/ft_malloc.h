@@ -1,9 +1,9 @@
 #ifndef FT_MALLOC_H
 # define FT_MALLOC_H
-# include "memory_manager.h"
-# include "utils.h"
 # include <string.h>
 # include <limits.h>
+# include "memory_manager.h"
+# include "utils.h"
 
 void *		malloc(size_t size);
 void 		*calloc(size_t nmemb, size_t size);
