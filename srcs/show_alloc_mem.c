@@ -42,3 +42,8 @@ show_alloc_mem(void) {
 	total += show_large();
 	prints("Total : ", 1); printnbase(total, BASE10, 10, 1); prints(" octets", 1); newline(1);
 }
+
+void
+show_alloc_mem_ex(void) {
+	
+}
