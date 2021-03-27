@@ -8,7 +8,7 @@ print_block(t_block_manager * block_manager, int fd) {
 	return (block_manager->block_size);
 }
 
-size_t
+static size_t
 show_zone(t_zone_header *zone_header) {
 	size_t total = 0;
 
@@ -21,7 +21,7 @@ show_zone(t_zone_header *zone_header) {
 	return (total);
 }
 
-size_t
+static size_t
 show_large() {
 	size_t total = 0;
 
