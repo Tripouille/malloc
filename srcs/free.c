@@ -11,19 +11,19 @@ zone_is_completely_free(t_zone_header * zone) {
 }
 
 static void
-clean_memory_manager(t_ptr_infos * infos) {
+clean_g_memory_manager(t_ptr_infos * infos) {
 	void * garbage = *infos->actual_zone;
 	size_t garbage_size = (*infos->actual_zone)->zone_size;
 
 	if (infos->prev_zone != NULL)
 	{
-		//write(1, buffer, sprintf(buffer, "clean_memory_manager premier if\n"));
+		//write(1, buffer, sprintf(buffer, "clean_g_memory_manager premier if\n"));
 		infos->prev_zone->next_zone_header = (*infos->actual_zone)->next_zone_header;
 		munmap(garbage, garbage_size);
 	}
 	else if (zone_is_large(*infos->actual_zone) || (*infos->actual_zone)->next_zone_header != NULL)
 	{
-		//write(1, buffer, sprintf(buffer, "clean_memory_manager deuxieme if\n"));
+		//write(1, buffer, sprintf(buffer, "clean_g_memory_manager deuxieme if\n"));
 		//if (zone_is_large(*infos->actual_zone))
 			//write(1, buffer, sprintf(buffer, "freeing large zone = %p\n", BLOCK_MANAGER_SHIFT(infos->block_manager)));
 		*infos->actual_zone = (*infos->actual_zone)->next_zone_header;
@@ -52,7 +52,7 @@ free_block(t_ptr_infos * infos) {
 	infos->block_manager->is_free = 1;
 	defragller(infos);
 	if (zone_is_completely_free(*infos->actual_zone))
-		clean_memory_manager(infos);
+		clean_g_memory_manager(infos);
 }
 
 void

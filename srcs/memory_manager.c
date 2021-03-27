@@ -1,13 +1,13 @@
 #include "memory_manager.h"
 # include "ft_malloc.h"
 
-t_memory_manager memory_manager;
+t_memory_manager g_memory_manager;
 char buffer[10000];
 //write(1, buffer, sprintf(buffer, "calling get_mmap for %li pages\n", size / getpagesize()));
 
 bool
 zone_is_large(t_zone_header * zone) {
-	for (t_zone_header * actual_zone = memory_manager.large;
+	for (t_zone_header * actual_zone = g_memory_manager.large;
 	actual_zone != NULL; actual_zone = actual_zone->next_zone_header)
 		if (actual_zone == zone)
 			return (true); 
@@ -58,9 +58,9 @@ try_set_ptr_zone_info(void * ptr, t_zone_header ** first_zone_header,
 
 static bool
 set_ptr_zone_info(void * ptr, t_ptr_infos *infos) {
-	if (try_set_ptr_zone_info(ptr, &memory_manager.tiny, infos)
-	|| try_set_ptr_zone_info(ptr, &memory_manager.small, infos)
-	|| try_set_ptr_zone_info(ptr, &memory_manager.large, infos))
+	if (try_set_ptr_zone_info(ptr, &g_memory_manager.tiny, infos)
+	|| try_set_ptr_zone_info(ptr, &g_memory_manager.small, infos)
+	|| try_set_ptr_zone_info(ptr, &g_memory_manager.large, infos))
 		return (true);
 	return (false);
 }

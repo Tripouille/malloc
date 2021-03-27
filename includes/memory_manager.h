@@ -1,5 +1,5 @@
-#ifndef MEMORY_MANAGER_H
-# define MEMORY_MANAGER_H
+#ifndef memory_manager_H
+# define memory_manager_H
 # include <stdio.h>
 # include <unistd.h>
 # include <sys/mman.h>
@@ -38,7 +38,7 @@ typedef struct s_ptr_infos
 	t_block_manager			 *furthest_prev_allocated_block_manager;
 }				t_ptr_infos;
 
-extern t_memory_manager memory_manager;
+extern t_memory_manager g_memory_manager;
 extern char buffer[10000];
 
 bool				zone_is_large(t_zone_header * zone);

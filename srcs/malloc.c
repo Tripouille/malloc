@@ -40,19 +40,18 @@ get_block_in_zone(size_t block_size, size_t zone_size, t_zone_header ** zone_hea
 
 static void *
 get_block_in_tiny_zone(size_t block_size) {
-	return (get_block_in_zone(block_size, (sizeof(t_block_manager) + TINY) * BLOCK_PER_ZONE, &memory_manager.tiny));
+	return (get_block_in_zone(block_size, (sizeof(t_block_manager) + TINY) * BLOCK_PER_ZONE, &g_memory_manager.tiny));
 }
 
 static void *
 get_block_in_small_zone(size_t block_size) {
-	return (get_block_in_zone(block_size, (sizeof(t_block_manager) + SMALL) * BLOCK_PER_ZONE, &memory_manager.small));
+	return (get_block_in_zone(block_size, (sizeof(t_block_manager) + SMALL) * BLOCK_PER_ZONE, &g_memory_manager.small));
 }
 
 static void *
 get_large_zone(size_t block_size) {
-	//write(1, buffer, sprintf(buffer, "get_large_zone ;) size = %lu\n", block_size));
 	size_t				const padded_size = calculate_padded_size(sizeof(t_zone_header) + sizeof(t_block_manager) + block_size);
-	t_zone_header **	zone_header = &memory_manager.large;
+	t_zone_header **	zone_header = &g_memory_manager.large;
 	t_block_manager *	block_manager = NULL;
 
 	while (*zone_header != NULL)
@@ -65,8 +64,6 @@ get_large_zone(size_t block_size) {
 	block_manager = ZONE_HEADER_SHIFT(*zone_header);
 	block_manager->block_size = padded_size - sizeof(t_zone_header) - sizeof(t_block_manager);
 	block_manager->is_free = 0;
-	//write(1, buffer, sprintf(buffer, "get_large_zone size = %lu \n", block_manager->block_size));
-	//show_alloc_mem();
 	return (BLOCK_MANAGER_SHIFT(block_manager));
 }
 
@@ -82,6 +79,7 @@ get_memory(size_t size) {
 
 void *
 malloc(size_t size) {
+	//return (NULL);
 	//write(1, buffer, sprintf(buffer, "calling malloc\n"));
 	if (size)
 	{
@@ -89,7 +87,7 @@ malloc(size_t size) {
 		void * result = get_memory(size);
 		//write(1, buffer, sprintf(buffer, "return = %p\n", result));
 		//show_alloc_mem();
-		//show_alloc_mem();
+		show_alloc_mem();
 		return (result);
 	}
 	return (NULL);
