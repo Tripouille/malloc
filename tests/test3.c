@@ -12,6 +12,8 @@ int main(void)
 	p[7] = realloc(p[7], 44);
 	show_alloc_mem_ex();
 
+	p[7] = realloc(p[7], 1025);
+	show_alloc_mem_ex();
 	p[7] = realloc(p[7], 444444);
 	show_alloc_mem_ex();
 	return (0);
