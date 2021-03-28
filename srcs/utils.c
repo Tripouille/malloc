@@ -35,24 +35,29 @@ slen(char const * s) {
 }
 
 void
-prints(char const * s, int fd) {
-	write(fd, s, slen(s));
+prints(char const * s) {
+	write(1, s, slen(s));
 }
 
 void
-printnbase(size_t n, char const * base, size_t base_size, int fd) {
+printnbase(size_t n, char const * base, size_t base_size) {
 	if (n >= base_size)
-		printnbase(n / base_size, base, base_size, fd);
-	write(fd, base + n % base_size, 1);
+		printnbase(n / base_size, base, base_size);
+	write(1, base + n % base_size, 1);
 }
 
 void
-printptr(void * ptr, int fd) {
-	prints("0x", 1);
-	printnbase((size_t)ptr, BASE16, 16, fd);
+printptr(void * ptr) {
+	prints("0x");
+	printnbase((size_t)ptr, BASE16, 16);
 }
 
 void
-newline(int fd) {
-	write(fd, "\n", 1);
+newline(void) {
+	write(1, "\n", 1);
+}
+
+void
+set_color(char const * color) {
+	prints(color);
 }

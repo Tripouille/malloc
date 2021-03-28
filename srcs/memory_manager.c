@@ -22,7 +22,6 @@ calculate_padded_size(size_t size) {
 
 void *
 get_mmap(size_t size) {
-	//write(1, buffer, sprintf(buffer, "get_mmap pages = %lu\n", size / getpagesize()));
 	return (mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0));
 }
 
@@ -75,9 +74,9 @@ bool
 set_ptr_info(void * ptr, t_ptr_infos *infos) {
 	if (!set_ptr_zone_info(ptr, infos))
 		return (false);
-	
+
 	infos->furthest_prev_allocated_block_manager = NULL;
-	void *	zone_end = ZONE_HEADER_SHIFT(infos->actual_zone) + (*infos->actual_zone)->zone_size;
+	void *	zone_end = ZONE_HEADER_SHIFT(*infos->actual_zone) + (*infos->actual_zone)->zone_size;
 	for (infos->block_manager = ZONE_HEADER_SHIFT(*infos->actual_zone);
 	BLOCK_MANAGER_SHIFT(infos->block_manager) < zone_end;
 	infos->block_manager = NEXT_BLOCK_MANAGER(infos->block_manager))

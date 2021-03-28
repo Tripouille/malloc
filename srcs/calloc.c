@@ -3,7 +3,8 @@
 
 void *
 calloc(size_t nmemb, size_t size) {
-	if (nmemb > ULONG_MAX / size)
+	if (!nmemb || !size 
+	|| nmemb > ULONG_MAX / size)
 		return (NULL);
 
 	size_t	required_size = nmemb * size;
