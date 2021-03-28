@@ -1,5 +1,11 @@
 #include "utils.h"
 
+
+size_t
+div_up(size_t value, size_t div) {
+	return ((value / div) + (value % div ? 1 : 0));
+}
+
 size_t
 min(size_t value1, size_t value2) {
 	return (value1 < value2 ? value1 : value2);

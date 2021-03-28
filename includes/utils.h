@@ -10,6 +10,7 @@
 #define RED "\e[0;31m"
 #define RESET "\e[0;0m"
 
+size_t	div_up(size_t value, size_t div);
 size_t	min(size_t value1, size_t value2);
 void	memory_move(char * dst, char * src, size_t size);
 bool	align_size(size_t * size);

@@ -1,5 +1,5 @@
 .DEFAULT_GOAL = tests
-TESTS 	= test0 test1 test2 test3
+TESTS 	= test0 test1 test2 
 
 ifeq ($(HOSTTYPE),)
 	HOSTTYPE := $(shell uname -m)_$(shell uname -s)

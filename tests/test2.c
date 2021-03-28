@@ -7,8 +7,9 @@ int main(void)
 	char * addr;
 	while (i < 1024)
 	{
-		addr = (char*)malloc(1024); (void)addr;
+		addr = (char*)malloc(1024);
 		addr[0] = 42;
+		//show_alloc_mem_ex();
 		free(addr);
 		i++;
 	}
