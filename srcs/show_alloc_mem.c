@@ -34,6 +34,7 @@ void
 show_alloc_mem(void) {
 	size_t total = 0;
 
+	pthread_mutex_lock(&g_memory_mutex);
 	prints("TINY : "); printptr(g_memory_manager.tiny); newline();
 	total += show_zone(g_memory_manager.tiny);
 	prints("SMALL : "); printptr(g_memory_manager.small); newline();
@@ -41,4 +42,5 @@ show_alloc_mem(void) {
 	prints("LARGE : "); printptr(g_memory_manager.large); newline();
 	total += show_large();
 	prints("Total : "); printnbase(total, BASE10, 10); prints(" octets"); newline();
+	pthread_mutex_unlock(&g_memory_mutex);
 }
