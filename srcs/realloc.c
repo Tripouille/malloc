@@ -2,6 +2,7 @@
 
 static void *
 move_into_new_block(t_ptr_infos *infos, size_t size) {
+	pthread_mutex_unlock(&g_memory_mutex);
 	void *		new_ptr = NULL;
 	void *		actual_ptr = BLOCK_MANAGER_SHIFT(infos->block_manager);
 
@@ -24,6 +25,7 @@ extend_memory(t_ptr_infos *infos, size_t size) {
 		infos->block_manager->block_size = size;
 		((t_block_manager*)NEXT_BLOCK_MANAGER(infos->block_manager))->block_size = total_size - size;
 		((t_block_manager*)NEXT_BLOCK_MANAGER(infos->block_manager))->is_free = 1;
+		pthread_mutex_unlock(&g_memory_mutex);
 		return (BLOCK_MANAGER_SHIFT(infos->block_manager));
 	}
 	else
@@ -47,8 +49,14 @@ realloc(void *ptr, size_t size) {
 		return (malloc(size));
 	else if (!size)
 		free(ptr);
-	if (!size || !set_ptr_info(ptr, &infos) || !align_size(&size))
+	if (!size || !align_size(&size))
 		return (NULL);
+
+	pthread_mutex_lock(&g_memory_mutex);
+	if (!set_ptr_info(ptr, &infos)) {
+		pthread_mutex_unlock(&g_memory_mutex);
+		return (NULL);
+	}
 
 	bool	is_large_zone = zone_is_large(*infos.actual_zone);
 	if (is_large_zone && size <= SMALL)
@@ -57,6 +65,7 @@ realloc(void *ptr, size_t size) {
 	{
 		if (!is_large_zone && infos.block_manager->block_size - size > sizeof(t_block_manager))
 			split_block(&infos, size);
+		pthread_mutex_unlock(&g_memory_mutex);
 		return (ptr);
 	}
 	else if (is_large_zone)
