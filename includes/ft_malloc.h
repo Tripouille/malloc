@@ -7,6 +7,7 @@
 # include "utils.h"
 
 void *		malloc(size_t size);
+void *		salloc(size_t size, char value);
 void 		*calloc(size_t nmemb, size_t size);
 void		free(void * ptr);
 void *		realloc(void *ptr, size_t size);

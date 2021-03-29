@@ -7,7 +7,7 @@ endif
 LINK	= libft_malloc.so
 NAME	= $(LINK)_$(HOSTTYPE).so
 SRCS	= $(addprefix srcs/, memory_manager.c show_alloc_mem.c show_alloc_mem_ex.c \
-							malloc.c calloc.c free.c realloc.c utils.c)
+							utils.c malloc.c calloc.c realloc.c salloc.c free.c)
 OBJS	= $(SRCS:srcs/%.c=objs/%.o)
 DEPS	= $(SRCS:srcs/%.c=deps/%.d)
 WD		= $(shell pwd)
