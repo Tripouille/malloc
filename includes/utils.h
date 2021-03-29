@@ -3,6 +3,7 @@
 # include <stddef.h>
 # include <stdbool.h>
 # include <unistd.h>
+# include <limits.h>
 
 #define BASE10 "0123456789"
 #define BASE16 "0123456789ABCDEF"
@@ -20,5 +21,7 @@ void	printnbase(size_t n, char const * base, size_t base_size);
 void	printptr(void * ptr);
 void	newline();
 void	set_color(char const * color);
+bool	is_digit(char c);
+bool	set_size_t(char const *s, size_t *n);
 
 #endif

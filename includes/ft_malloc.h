@@ -2,6 +2,7 @@
 # define FT_MALLOC_H
 # include <string.h>
 # include <limits.h>
+# include <stdlib.h>
 # include "memory_manager.h"
 # include "utils.h"
 

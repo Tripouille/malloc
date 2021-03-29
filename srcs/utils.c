@@ -67,3 +67,15 @@ void
 set_color(char const * color) {
 	prints(color);
 }
+
+bool	is_digit(char c) {
+	return (c >= '0' && c <= '9');
+}
+
+bool	set_size_t(const char *s, size_t *n)
+{
+	*n = 0;
+	while (is_digit(*s) && *n * 10 + *s - '0' > *n)
+		*n = *n * 10 + *s++ - '0';
+	return (!*s);
+}

@@ -69,7 +69,13 @@ get_large_zone(size_t block_size) {
 
 static void *
 get_memory(size_t size) {
-	if (size <= TINY)
+	char const * mmap_threshold = getenv("M_MMAP_THRESHOLD");
+	size_t value;
+
+	if (mmap_threshold != NULL && set_size_t(mmap_threshold, &value)
+	&& size > value)
+		return (get_large_zone(size));
+	else if (size <= TINY)
 		return (get_block_in_tiny_zone(size));
 	else if (size <= SMALL)
 		return (get_block_in_small_zone(size));

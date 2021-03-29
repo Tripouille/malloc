@@ -20,5 +20,7 @@ int main(void)
 	show_alloc_mem_ex();
 	p[8] = malloc(4444441);
 	show_alloc_mem_ex();
+	free_all();
+	show_alloc_mem_ex();
 	return (0);
 }
