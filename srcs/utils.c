@@ -75,6 +75,8 @@ bool	is_digit(char c) {
 bool	set_size_t(const char *s, size_t *n)
 {
 	*n = 0;
+	if (s[0] == '0' && !s[1])
+		return (true);
 	while (is_digit(*s) && *n * 10 + *s - '0' > *n)
 		*n = *n * 10 + *s++ - '0';
 	return (!*s);

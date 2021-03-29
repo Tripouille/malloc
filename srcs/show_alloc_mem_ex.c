@@ -48,6 +48,6 @@ show_alloc_mem_ex(void) {
 	pthread_mutex_lock(&g_memory_mutex);
 	prints("TINY->"); show_zone_ex(g_memory_manager.tiny); newline();
 	prints("SMALL->"); show_zone_ex(g_memory_manager.small); newline();
-	prints("LARGE->"); show_zone_ex(g_memory_manager.large); newline(); newline();
+	prints("LARGE->"); show_zone_ex(g_memory_manager.large); newline();
 	pthread_mutex_unlock(&g_memory_mutex);
 } 
