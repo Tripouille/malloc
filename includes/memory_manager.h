@@ -38,7 +38,7 @@ typedef struct s_ptr_infos
 	t_zone_header			*prev_zone;
 	t_zone_header			**actual_zone;
 	t_block_manager 		*block_manager;
-	t_block_manager			 *furthest_prev_allocated_block_manager;
+	t_block_manager			 *closest_prev_allocated_block_manager;
 }				t_ptr_infos;
 
 extern t_memory_manager g_memory_manager;

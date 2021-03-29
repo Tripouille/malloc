@@ -75,7 +75,7 @@ set_ptr_info(void * ptr, t_ptr_infos *infos) {
 	if (!set_ptr_zone_info(ptr, infos))
 		return (false);
 
-	infos->furthest_prev_allocated_block_manager = NULL;
+	infos->closest_prev_allocated_block_manager = NULL;
 	void *	zone_end = ZONE_HEADER_SHIFT(*infos->actual_zone) + (*infos->actual_zone)->zone_size;
 	for (infos->block_manager = ZONE_HEADER_SHIFT(*infos->actual_zone);
 	BLOCK_MANAGER_SHIFT(infos->block_manager) < zone_end;
@@ -84,7 +84,7 @@ set_ptr_info(void * ptr, t_ptr_infos *infos) {
 		if (BLOCK_MANAGER_SHIFT(infos->block_manager) == ptr)
 			return (true);
 		if (!infos->block_manager->is_free)
-			infos->furthest_prev_allocated_block_manager = infos->block_manager;
+			infos->closest_prev_allocated_block_manager = infos->block_manager;
 	}
 	return (false);
 }

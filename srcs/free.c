@@ -13,7 +13,7 @@ zone_is_completely_free(t_zone_header * zone) {
 static void
 clean_g_memory_manager(t_ptr_infos * infos) {
 	void * garbage = *infos->actual_zone;
-	size_t garbage_size = (*infos->actual_zone)->zone_size;
+	size_t garbage_size = sizeof(t_zone_header) + (*infos->actual_zone)->zone_size;
 
 	if (infos->prev_zone != NULL)
 	{
@@ -30,8 +30,8 @@ clean_g_memory_manager(t_ptr_infos * infos) {
 static void
 defragller(t_ptr_infos * infos) {
 	void *	zone_end = ZONE_HEADER_SHIFT(*infos->actual_zone) + (*infos->actual_zone)->zone_size;
-	t_block_manager * furthest_prev_free_block_manager = infos->furthest_prev_allocated_block_manager == NULL ?
-									ZONE_HEADER_SHIFT(*infos->actual_zone) : NEXT_BLOCK_MANAGER(infos->furthest_prev_allocated_block_manager);
+	t_block_manager * furthest_prev_free_block_manager = infos->closest_prev_allocated_block_manager == NULL ?
+									ZONE_HEADER_SHIFT(*infos->actual_zone) : NEXT_BLOCK_MANAGER(infos->closest_prev_allocated_block_manager);
 	t_block_manager * furthest_next_allocated_block_manager = infos->block_manager;
 
 	while (BLOCK_MANAGER_SHIFT(furthest_next_allocated_block_manager) < zone_end
