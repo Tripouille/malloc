@@ -55,6 +55,11 @@ void
 free(void * ptr) {
 	t_ptr_infos infos;
 
-	if (ptr != NULL && set_ptr_info(ptr, &infos))
-		free_block(&infos);
+	if (ptr != NULL)
+	{
+		pthread_mutex_lock(&g_memory_mutex);
+		if (set_ptr_info(ptr, &infos))
+			free_block(&infos);
+		pthread_mutex_unlock(&g_memory_mutex);
+	}
 }

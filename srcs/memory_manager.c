@@ -1,9 +1,9 @@
 #include "memory_manager.h"
 # include "ft_malloc.h"
 
-t_memory_manager g_memory_manager;
-char buffer[10000];
-//write(1, buffer, sprintf(buffer, "calling get_mmap for %li pages\n", size / getpagesize()));
+t_memory_manager	g_memory_manager;
+pthread_mutex_t		g_memory_mutex = PTHREAD_MUTEX_INITIALIZER;
+
 
 bool
 zone_is_large(t_zone_header * zone) {

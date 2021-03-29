@@ -11,5 +11,6 @@ int main(void)
 		addr[0] = 42;
 		i++;
 	}
+	//show_alloc_mem_ex();
 	return (0);
 }

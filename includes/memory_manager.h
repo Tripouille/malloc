@@ -4,7 +4,10 @@
 # include <unistd.h>
 # include <sys/mman.h>
 # include <stdbool.h>
+# include <pthread.h>
+# include <errno.h>
 # include "utils.h"
+
 
 #define ZONE_HEADER_SHIFT(z) ((void*)z + sizeof(t_zone_header))
 #define BLOCK_MANAGER_SHIFT(bm) ((void*)bm + sizeof(t_block_manager))
@@ -40,7 +43,7 @@ typedef struct s_ptr_infos
 }				t_ptr_infos;
 
 extern t_memory_manager g_memory_manager;
-extern char buffer[10000];
+extern pthread_mutex_t	g_memory_mutex;
 
 bool				zone_is_large(t_zone_header * zone);
 size_t				calculate_padded_size(size_t size);

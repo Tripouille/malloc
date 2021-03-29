@@ -79,7 +79,11 @@ get_memory(size_t size) {
 
 void *
 malloc(size_t size) {
-	if (size && align_size(&size))
-		return (get_memory(size));
+	if (size && align_size(&size)) {
+		pthread_mutex_lock(&g_memory_mutex);
+		void *	ptr = get_memory(size);
+		pthread_mutex_unlock(&g_memory_mutex);
+		return (ptr);
+	}
 	return (NULL);
 }
