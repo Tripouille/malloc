@@ -38,6 +38,7 @@ split_block(t_ptr_infos * infos, size_t size) {
 	infos->block_manager->block_size = size;
 	t_block_manager * new_block_manager = NEXT_BLOCK_MANAGER(infos->block_manager);
 	new_block_manager->block_size = available_size;
+	new_block_manager->is_free = 0;
 	pthread_mutex_unlock(&g_memory_mutex);
 	free((void*)new_block_manager + sizeof(t_block_manager));
 }
